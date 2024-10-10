@@ -1,4 +1,4 @@
-# SupplyTrust - Verifiable Supply Chain Data Management Systems for Tracking, Tracing, and Trusting Supply Chains
+# SupplyTrust - Verifiable Supply Chain Data Management Systems for Tracing, Tracking, and Trusting Supply Chains
 
 ## What is _SupplyTrust_?
 
