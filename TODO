@@ -1,0 +1,2 @@
+implement following work flow: user traces item by inputting did, then it clicks on metadata a pop up window opens hich either displays the metadata (if the file is public) or it displays a qr code that must be scanned in order to verify by presenting VP with authorization claim
+add "claim your VC" path in the navigation bar where the user can get VC for accessing private ipfs file
