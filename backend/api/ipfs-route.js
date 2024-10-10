@@ -24,24 +24,30 @@ router.route('/upload').post(async (req, res)=>{
             res.send("ERROR - Invalid query: missing data in body")
         }
 
+        const file = new File([JSON.stringify(req.body.data)], { type: "text/plain" });
+
         // upload file to private or public ipfs depending on configuration set by user in query 
         let upload;
         if(req.query.private===true){
+            console.log("attempted upload privately")
             // check if requester is authorized to upload to private ipfs?
             // if not, send error message
                 //TODO
 
             // else, upload file to private ipfs
-            upload = await fileApi.upload.file(req.body.data);
+            upload = await fileApi.upload.file(file);
+            //upload = await ipfsApi.pinJSONToIPFS(req.body.data)
             console.log(upload);
         }else{
+            console.log("attempted upload publicly")
             //upload file to public ipfs
-            upload = await ipfsApi.upload.file(req.body.data);
+            //upload = await ipfsApi.upload.file(req.body.data);
+            upload = await fileApi.upload.file(file);
             console.log(upload);
         }
         
         // get cid from response
-        const cid = "ipfsLink" //TODO: get cid from response
+        const cid = upload.cid
 
         // send response to frontend
         if(cid !== ""){
@@ -49,7 +55,6 @@ router.route('/upload').post(async (req, res)=>{
         }else{
             res.send("ERROR")
         }
-        
     } catch (error) {
         console.log(error)
     }
