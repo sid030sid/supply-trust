@@ -47,8 +47,8 @@ This is the implementation of DIDChain as a web app.
 
 ## Future Work
 - change did creation from internal secret mode to client secret mode (switch from [Credential Service API](https://credential-service.cheqd.net/swagger) to [universal registrar api for Cheqd](https://did-registrar.cheqd.net/api-docs/#/))
-- standardize the IPFS data for each supply chain event: producing, shipping, receiving and manufacturing (with the help of supply chain experts). Eventually think about specific domains who are willing to use VSCDMS for their supply chains and create domain specific standards for these domains.
-- create an identity registrar so that VSCDMS can only be accessed as an offical supply chain entity
+- standardize the IPFS data for each supply chain event: producing, shipping, receiving and manufacturing (with the help of supply chain experts). Each of theses standards is a verifiable credential which would additionally add verifiability to the data. These VC about supply chain event claims would then be stored as [Linked Verifiable Presentations](https://identity.foundation/linked-vp/) in the DID Document of the respective supply chain item. Eventually think about specific domains who are willing to use SupplyTrust for their supply chains and create domain specific standards for these domains.
+- create an identity registrar so that SupplyTrust can only be accessed as an offical supply chain entity --> done here with the VC based access system
 
 ## Links
 - Upload to IPFS via Moralis API: https://moralis.io/how-to-upload-files-to-ipfs-full-guide/
