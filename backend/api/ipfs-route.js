@@ -29,7 +29,6 @@ router.route('/upload').post(async (req, res)=>{
         // upload file to private or public ipfs depending on configuration set by user in query 
         let upload;
         if(req.query.private===true){
-            console.log("attempted upload privately")
             // check if requester is authorized to upload to private ipfs?
             // if not, send error message
                 //TODO
@@ -39,11 +38,9 @@ router.route('/upload').post(async (req, res)=>{
             //upload = await ipfsApi.pinJSONToIPFS(req.body.data)
             console.log(upload);
         }else{
-            console.log("attempted upload publicly")
             //upload file to public ipfs
             //upload = await ipfsApi.upload.file(req.body.data);
-            upload = await fileApi.upload.file(file);
-            console.log(upload);
+            upload = await ipfsApi.upload.file(file);
         }
         
         // get cid from response

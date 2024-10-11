@@ -19,7 +19,6 @@ router.route('/create').post(async (req, res)=>{
         // prepare API request for DID creation
         const token = process.env.CHEQD_CREDENTIAL_SERVICE_TOKEN
         const url = 'https://studio-api.cheqd.net/did/create';
-        //const data = 'network=testnet&identifierFormatType=uuid&verificationMethodType=Ed25519VerificationKey2020&service='+encodeURIComponent(JSON.stringify(services))+'&key=&%40context=https%3A%2F%2Fwww.w3.org%2Fns%2Fdid%2Fv1'
         const data = {
             network: 'testnet',
             identifierFormatType: 'uuid',
@@ -65,7 +64,7 @@ router.route('/update').post(async (req, res)=>{
 
         // prepare API request for DID update
         const token = process.env.CHEQD_CREDENTIAL_SERVICE_TOKEN
-        const url = 'https://credential-service.cheqd.net/did/update';
+        const url = 'https://studio-api.cheqd.net/did/update';
         const headers = {
             'accept': 'application/json',
             'Content-Type': 'application/x-www-form-urlencoded',
