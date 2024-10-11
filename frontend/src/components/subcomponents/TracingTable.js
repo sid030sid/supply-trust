@@ -9,6 +9,15 @@ import Paper from '@mui/material/Paper';
 import { Link } from '@mui/material';
 
 export default function TracingTable(props) {
+  const [eventMetadataPopUp, setEventMetadataPopUp] = React.useState({});
+
+  const supplyChainEventPopUp = (ipfsURL) => {
+
+    // get event metadata from IPFS
+
+    // open pop up dialog
+    setEventMetadataPopUp({});
+  }
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650}} aria-label="simple table">
@@ -29,9 +38,12 @@ export default function TracingTable(props) {
                 {event.didDocumentMetadata.updated ? event.didDocumentMetadata.updated : event.didDocumentMetadata.created}
               </TableCell>
               <TableCell align="right">
-                <Link target="_blank" rel="noreferrer" href={event.service.find(i=>{return(i.id.includes("ipfs"))})?.serviceEndpoint[0]}>
+                {/*<Link target="_blank" rel="noreferrer" href={event.service.find(i=>{return(i.id.includes("ipfs"))})?.serviceEndpoint[0]}>
                     See on IPFS
-                </Link>
+                </Link>*/}
+                <Button onClick={()=>supplyChainEventPopUp(event.service.find(i=>{return(i.id.includes("ipfs"))})?.serviceEndpoint[0])}>
+                  See details!
+                </Button>
               </TableCell>
               <TableCell align="right">
                 <Link target="_blank" rel="noreferrer" href={event.didResolverURL}>

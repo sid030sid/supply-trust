@@ -65,16 +65,27 @@ router.route('/download/:cid').post(async (req, res)=>{
             res.send("ERROR - Invalid query: missing cid in params")
         }
         
-
+        let data;
         // download file from public ipfs
             // TODO: think about whether this is actually necessary... i do not believe so as the link will be directly given in frontend
+        data = await pinata.gateways.get("bafkreibm6jg3ux5qumhcn2b3flc3tyu6dmlb4xa7u5bf44yegnrjhc4yeq");
+        if(data === ""){ // if not found, check private ipfs
+            data = await pinata.gateways.get(cid);
+            console.log(data)
 
-        // if not found, check private ipfs
+            const url = await pinata.gateways.createSignedURL({
+                cid: cid,
+                expires: 1800,
+            })
+            console.log(url)
+        }
+
+        
         // if found, check if requester is authorized to download from private ipfs
         // if not, send error message
         // else, forward file to private ipfs
         //TODO: VC based access system!
-        
+        res.send(data)
     } catch (error) {
         console.log(error)
     }
