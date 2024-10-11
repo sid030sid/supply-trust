@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const axios = require('axios')
-const { writeFile, readFile } = require('fs');
+const qs = require('qs');
 require("dotenv").config();
 
 
@@ -18,40 +18,28 @@ router.route('/create').post(async (req, res)=>{
 
         // prepare API request for DID creation
         const token = process.env.CHEQD_CREDENTIAL_SERVICE_TOKEN
-        const url = 'https://credential-service.cheqd.net/did/create';
-        const data = 'network=testnet&identifierFormatType=uuid&verificationMethodType=Ed25519VerificationKey2020&service='+encodeURIComponent(JSON.stringify(services))+'&key=&%40context=https%3A%2F%2Fwww.w3.org%2Fns%2Fdid%2Fv1'
+        const url = 'https://studio-api.cheqd.net/did/create';
+        //const data = 'network=testnet&identifierFormatType=uuid&verificationMethodType=Ed25519VerificationKey2020&service='+encodeURIComponent(JSON.stringify(services))+'&key=&%40context=https%3A%2F%2Fwww.w3.org%2Fns%2Fdid%2Fv1'
+        const data = {
+            network: 'testnet',
+            identifierFormatType: 'uuid',
+            verificationMethodType: 'Ed25519VerificationKey2020',
+            service: JSON.stringify(services),  //encodeURIComponent(JSON.stringify(services))
+            key: '',
+            '@context': 'https://www.w3.org/ns/did/v1',
+        };
+        const encodedData = qs.stringify(data);
         const headers = {
             'accept': 'application/json',
             'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': `Bearer ${token}`
+            'x-api-key': token
         };
 
         // create DID using Credential service API offered by Cheqd
-        const resCreateDid = await axios.post(url, data, { headers })
+        const resCreateDid = await axios.post(url, encodedData, { headers })
         
         // send did document of newly created did to frontend and store it in db
         if(resCreateDid){
-
-            // store in db
-            readFile("./db.json", (error, data) => {
-                if (error) {
-                  console.log(error);
-                  return;
-                }
-                const parsedData = JSON.parse(data);
-                parsedData.push(
-                    {
-                        createdAt: new Date().toISOString(),
-                        did: resCreateDid.data
-                    }
-                );
-                writeFile("./db.json", JSON.stringify(parsedData, null, 2), (err) => {
-                  if (err) {
-                    console.log('ERROR: update db');
-                    return;
-                  }
-                });
-            });
             
             // send did doc of new did to frontend
             res.send(resCreateDid.data)
@@ -81,7 +69,7 @@ router.route('/update').post(async (req, res)=>{
         const headers = {
             'accept': 'application/json',
             'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': `Bearer ${token}`
+            'x-api-key': token
         };
 
         // create DID using Credential service API offered by Cheqd
