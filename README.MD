@@ -1,5 +1,8 @@
 # SupplyTrust - Verifiable Supply Chain Data Management Systems for Tracing, Tracking, and Trusting Supply Chains
 
+## Limitations
+1. If one file was uploaded to the public ipfs and than uploaded to the private ipfs, SupplyTrust cannot gurantee privacy even when the file is unpinned from the public ipfs.
+
 ## What is _SupplyTrust_?
 
 ## What I inspired me to create _SupplyTrusts_?

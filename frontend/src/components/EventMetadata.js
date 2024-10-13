@@ -53,15 +53,20 @@ const EventMetadata = () => {
     return(
         <div>
             {eventMetadata?
+                eventMetadata === "private"?
+                    <div>
+                        <h1>Supply chain event metadata stored in IPFS file {cid} is private. Please present VC so that SupplyTrust can verify your access right for private IPFS file: {cid}</h1>
+                        <h2>TODO: show QR code for verifiable presentation</h2>
+                    </div>
+                :
                 <div>
-                    <h2>{eventMetadata?.event}</h2>
-                    <h2>{JSON.stringify(eventMetadata?.metadata)}</h2>
+                    <h2>Supply chain event: </h2>
+                    <pre>{eventMetadata?.event}</pre>
+                    <h2>Event metadata:</h2>
+                    <pre>{JSON.stringify(eventMetadata?.metadata)}</pre>
                 </div>
             :
-                <div>
-                    <h1>Supply chain event metadata stored in IPFS file {cid} is private. Please present VC so that SupplyTrust can verify your access right for private IPFS file: {cid}</h1>
-                    <h2>TODO: show QR code for verifiable presentation</h2>
-                </div>
+                ""
             }
         </div>
     );

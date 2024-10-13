@@ -127,7 +127,7 @@ export default function InputForTracing(props) {
                         did with public ipfs file: did:cheqd:testnet:2377d740-5876-4ccb-9fef-9d9c7ee3996d
                     </Typography>
                     <Typography component="h3" variant="h5" sx={{marginBottom:3}}>
-                        did with private ipfs file: did:cheqd:testnet:f5954f0f-bd50-4e5e-b4b5-3e2dbb0ac711
+                        did with private ipfs file: did:cheqd:testnet:8ca9505f-4ae9-40f5-850a-790a149c0442
                     </Typography>
                 </div>
             </Box>

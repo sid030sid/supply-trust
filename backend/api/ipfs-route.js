@@ -17,7 +17,6 @@ const fileApi = new PinataFileApi({
 router.route('/upload').post(async (req, res)=>{
     try {
 
-        console.log("private? ", req.query.private)
         if(req.query.private===""){
             res.send("ERROR - Invalid query: mising info on private in query")
         }
@@ -26,14 +25,12 @@ router.route('/upload').post(async (req, res)=>{
             res.send("ERROR - Invalid query: missing data in body")
         }
 
-        console.log("data", req.body.data)
-
         const file = new File([JSON.stringify(req.body.data)], { type: "text/plain" });
 
         // upload file to private or public ipfs depending on configuration set by user in query 
         let upload;
         let cid;
-        if(req.query.private===true){
+        if(req.query.private==="true"){
             // check if requester is authorized to upload to private ipfs?
             // if not, send error message
                 //TODO

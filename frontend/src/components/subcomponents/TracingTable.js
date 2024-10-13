@@ -30,7 +30,7 @@ export default function TracingTable(props) {
                 {event.didDocumentMetadata.updated ? event.didDocumentMetadata.updated : event.didDocumentMetadata.created}
               </TableCell>
               <TableCell align="right">
-                <Link target="_blank" rel="noreferrer" href={event.service.find(i=>{return(i.id.includes("ipfs"))})?.serviceEndpoint[0]}>
+                <Link href={"trace-and-track/"+event.service.find(i=>{return(i.id.includes("ipfs"))})?.serviceEndpoint[0]}>
                     See details
                 </Link>
               </TableCell>

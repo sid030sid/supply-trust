@@ -20,8 +20,8 @@ export default function Navbar(props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{flexGrow:1}}>
-            TrustSupply
+          <Typography variant="h4" component="div" sx={{flexGrow:1}}>
+            SupplyTrust
           </Typography>
         </Toolbar>
       </AppBar>
