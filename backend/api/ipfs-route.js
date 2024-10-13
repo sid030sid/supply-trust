@@ -16,6 +16,8 @@ const fileApi = new PinataFileApi({
 
 router.route('/upload').post(async (req, res)=>{
     try {
+
+        console.log("private? ", req.query.private)
         if(req.query.private===""){
             res.send("ERROR - Invalid query: mising info on private in query")
         }
@@ -24,10 +26,13 @@ router.route('/upload').post(async (req, res)=>{
             res.send("ERROR - Invalid query: missing data in body")
         }
 
+        console.log("data", req.body.data)
+
         const file = new File([JSON.stringify(req.body.data)], { type: "text/plain" });
 
         // upload file to private or public ipfs depending on configuration set by user in query 
         let upload;
+        let cid;
         if(req.query.private===true){
             // check if requester is authorized to upload to private ipfs?
             // if not, send error message
@@ -36,15 +41,14 @@ router.route('/upload').post(async (req, res)=>{
             // else, upload file to private ipfs
             upload = await fileApi.upload.file(file);
             //upload = await ipfsApi.pinJSONToIPFS(req.body.data)
-            console.log(upload);
+            cid = upload.cid
+            console.log("upload of private file", upload);
         }else{
             //upload file to public ipfs
             //upload = await ipfsApi.upload.file(req.body.data);
             upload = await ipfsApi.upload.file(file);
+            cid = upload.IpfsHash
         }
-        
-        // get cid from response
-        const cid = upload.cid
 
         // send response to frontend
         if(cid !== ""){
@@ -57,7 +61,7 @@ router.route('/upload').post(async (req, res)=>{
     }
 })
 
-router.route('/download/:cid').post(async (req, res)=>{
+router.route('/download/:cid').get(async (req, res)=>{
     try {
         const cid = req.params.cid
 
@@ -68,12 +72,12 @@ router.route('/download/:cid').post(async (req, res)=>{
         let data;
         // download file from public ipfs
             // TODO: think about whether this is actually necessary... i do not believe so as the link will be directly given in frontend
-        data = await pinata.gateways.get("bafkreibm6jg3ux5qumhcn2b3flc3tyu6dmlb4xa7u5bf44yegnrjhc4yeq");
+        data = await ipfsApi.gateways.get(cid);
         if(data === ""){ // if not found, check private ipfs
-            data = await pinata.gateways.get(cid);
-            console.log(data)
+            data = await fileApi.gateways.get(cid);
+            console.log("data from private ipfs", data)
 
-            const url = await pinata.gateways.createSignedURL({
+            const url = await fileApi.gateways.createSignedURL({
                 cid: cid,
                 expires: 1800,
             })
@@ -90,5 +94,7 @@ router.route('/download/:cid').post(async (req, res)=>{
         console.log(error)
     }
 })
+
+//TODO: endpoint that returns true if ipfs file is private, false if public (solely based on cid)
 
 module.exports = router;

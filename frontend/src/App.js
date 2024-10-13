@@ -8,6 +8,7 @@ import NoPage from "./components/NoPage"
 import DrawerMenu from './components/subcomponents/DrawerMenu';
 import Navbar from './components/subcomponents/Navbar';
 import SCDMS from "./components/SCDMS"
+import EventMetadata from './components/EventMetadata';
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
         <Routes>
           <Route index element={<Home/>} />
           <Route path="/trace-and-track" element={<InputForTracing/>}/>
+          <Route path="/trace-and-track/:cid" element={<EventMetadata/>}/>
           <Route path="/scdms" element={<SCDMS/>}/>
           <Route path="*" element={<NoPage/>} />
         </Routes>

@@ -15,6 +15,7 @@ router.route('/create').post(async (req, res)=>{
     try {
         // get data from request body
         const services = req.body.services
+        console.log(services)
 
         // prepare API request for DID creation
         const token = process.env.CHEQD_CREDENTIAL_SERVICE_TOKEN

@@ -1,3 +1,4 @@
-make upload via api file and ipfs file possible: 'Bad Request. No auth rules for handling such request: GET /did/create or please check that namespace scpecified correctly.' is thrown
+add pop up dialog that shows qr code for people who uploaded ipfs file in private mode those need to get a vc issued for access rights!
+add auth routes: authorize endpoint verifies vc_jwt regarding if the controller of the did is also the issuer of the vc with access rights to specific private ipfs file or the issuer is the supplytrust server
 implement following work flow: user traces item by inputting did, then it clicks on metadata a pop up window opens hich either displays the metadata (if the file is public) or it displays a qr code that must be scanned in order to verify by presenting VP with authorization claim --> verification service (built in download/:cid endpoint that is meant for private files)
 add "claim your VC" path in the navigation bar where the user can get VC for accessing private ipfs file --> issuer service (build own endpoints)

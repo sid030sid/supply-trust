@@ -40,6 +40,7 @@ export default function SCDMS(props) {
         //uplaod file to ipfs
         const res = await axios.post(`/api-ipfs/upload?private=${checked}`, {data : eventInformationObj})
 
+
         //get ipfs path
         const ipfsPath = res.data //TODO in future: extract IPFS CID from Moralis url for IPFS file
 
