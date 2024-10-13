@@ -19,3 +19,4 @@ Lack of accountability of supply chain entities gives them the opportunity to vi
 
 ## What's next for _SupplyTrust_?
 - lower cost
+- give option for supply chain entities that document their supply chain event privately to add an URL as Linked Domains to the DID Document version of their supply chain event. This URL is then used by other stakeholders to request a VC that enables acess to the private supply chain event metadata file.

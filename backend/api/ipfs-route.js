@@ -58,6 +58,44 @@ router.route('/upload').post(async (req, res)=>{
     }
 })
 
+router.route('/download/:cid').get(async (req, res) => {
+    try {
+        const cid = req.params.cid;
+
+        if (cid === "") {
+            return res.status(400).send("ERROR - Invalid query: missing cid in params");
+        }
+
+        let data;
+        // Attempt to download file from public IPFS
+        try {
+            data = await ipfsApi.gateways.get(cid);
+        } catch (err) {
+            // If the error is an AuthenticationError from Pinata, then the requested ipfs file is private
+            if (err.statusCode === 403 && err.details.includes("The owner of this gateway does not have this content pinned")) {
+                
+                // get file from private ipfs
+                data = await fileApi.gateways.get(cid);
+            } else {
+                // If it's not an AuthenticationError, throw it further
+                throw err;
+            }
+        }
+
+        // If data was found, send it to the client
+        if (data) {
+            return res.send(data);
+        } else {
+            return res.status(404).send("File not found on IPFS");
+        }
+    } catch (error) {
+        console.error("Error in download route:", error);
+        return res.status(500).send("Server error");
+    }
+});
+
+
+/*
 router.route('/download/:cid').get(async (req, res)=>{
     try {
         const cid = req.params.cid
@@ -70,6 +108,7 @@ router.route('/download/:cid').get(async (req, res)=>{
         // download file from public ipfs
             // TODO: think about whether this is actually necessary... i do not believe so as the link will be directly given in frontend
         data = await ipfsApi.gateways.get(cid);
+        console.log("data from public ipfs", data)
         if(data === ""){ // if not found, check private ipfs
             data = await fileApi.gateways.get(cid);
             console.log("data from private ipfs", data)
@@ -91,6 +130,7 @@ router.route('/download/:cid').get(async (req, res)=>{
         console.log(error)
     }
 })
+*/
 
 //TODO: endpoint that returns true if ipfs file is private, false if public (solely based on cid)
 
