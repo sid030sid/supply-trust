@@ -32,11 +32,11 @@ export default function TracingTable(props) {
               </TableCell>
               <TableCell align="right">
                 <Link href={"trace-and-track/"+event.service.find(i=>{return(i.id.includes("ipfs"))})?.serviceEndpoint[0]}>
-                  {event.service.find(i=>{return(i.id.includes("accessRequestUrl"))})? 
+                    See details
+                    {event.service.find(i=>{return(i.id.includes("requestAccessUrl"))})?.serviceEndpoint?.length > 0 ?  
                     <LockIcon/>
                     : ""
                   }
-                    See details
                 </Link>
               </TableCell>
               <TableCell align="right">
