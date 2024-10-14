@@ -9,13 +9,14 @@ import TracingTable from './subcomponents/TracingTable';
 import CompartmentSelector from './subcomponents/CompartmentSelector';
 
 
+
 export default function InputForTracing(props) {
 
     // state variables
     const [history, setHistory] = React.useState([])
     const [compartments, setCompartments] = React.useState([])
     const [compartmentHistory, setCompartmentHistory] = React.useState([])
-
+    
     const traceAndTrack = async (did, compartment) => {
         try {
             // get history of did aka list of its versions and list of its links to ipfs
