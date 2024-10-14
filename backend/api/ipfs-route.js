@@ -1,4 +1,6 @@
 const router = require('express').Router();
+const crypto = require('crypto');
+
 require("dotenv").config();
 
 const {PinataSDK: PinataIpfsApi} = require("pinata-web3");
@@ -25,7 +27,8 @@ router.route('/upload').post(async (req, res)=>{
             res.send("ERROR - Invalid query: missing data in body")
         }
 
-        const file = new File([JSON.stringify(req.body.data)], { type: "text/plain" });
+        const filename = crypto.randomBytes(16).toString('base64'); //create nonce to name file note: without name private ipfs by pinata does not work
+        const file = new File([JSON.stringify(req.body.data)], filename, { type: "text/plain" });
 
         // upload file to private or public ipfs depending on configuration set by user in query 
         let upload;
@@ -39,7 +42,6 @@ router.route('/upload').post(async (req, res)=>{
             upload = await fileApi.upload.file(file);
             //upload = await ipfsApi.pinJSONToIPFS(req.body.data)
             cid = upload.cid
-            console.log("upload of private file", upload);
         }else{
             //upload file to public ipfs
             //upload = await ipfsApi.upload.file(req.body.data);
@@ -57,6 +59,55 @@ router.route('/upload').post(async (req, res)=>{
         console.log(error)
     }
 })
+
+/*
+router.route('/download-public-ipfs/:cid').get(async (req, res) => {
+    try {
+        const cid = req.params.cid;
+
+        if (cid === "") {
+            return res.status(400).send("ERROR - Invalid query: missing cid in params");
+        }
+
+        const data = await ipfsApi.gateways.get(cid);
+        console.log(data)
+
+        // If data was found, send it to the client
+        if (data) {
+            return res.send(data);
+        } else {
+            return res.status(404).send("File not found on IPFS");
+        }
+    } catch (error) {
+        console.error("Error in download route:", error);
+        return res.status(500).send("Server error");
+    }
+});
+
+router.route('/download-private-ipfs/:cid').get(async (req, res) => {
+    try {
+        const cid = req.params.cid;
+
+        if (cid === "") {
+            return res.status(400).send("ERROR - Invalid query: missing cid in params");
+        }
+
+        const file = await fileApi.gateways.get(cid);
+        const data = await file.data.text()
+
+        // If data was found, send it to the client
+        if (data) {
+            return res.send(data);
+        } else {
+            return res.status(404).send("File not found on private IPFS");
+        }
+    } catch (error) {
+        console.error("Error in download route:", error);
+        return res.status(500).send("Server error");
+    }
+});
+*/
+
 
 router.route('/download/:cid').get(async (req, res) => {
     try {
@@ -79,7 +130,15 @@ router.route('/download/:cid').get(async (req, res) => {
     } catch (error) {
         if (error.statusCode === 403 && error.details.includes("The owner of this gateway does not have this content pinned")) {
             // get file from private ipfs
-            data = await fileApi.gateways.get(cid);
+            const file = await fileApi.gateways.get(cid);
+            data = await file.data.text()
+
+            // If data was found, send it to the client
+            if (data) {
+                return res.send(data);
+            } else {
+                return res.status(404).send("File not found in private IPFS");
+            }
         } else {
             console.error("Error in download route:", error);
             return res.status(500).send("Server error");
