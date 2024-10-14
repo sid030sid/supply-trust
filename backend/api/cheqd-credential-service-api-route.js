@@ -15,7 +15,6 @@ router.route('/create').post(async (req, res)=>{
     try {
         // get data from request body
         const services = req.body.services
-        console.log(services)
 
         // prepare API request for DID creation
         const token = process.env.CHEQD_CREDENTIAL_SERVICE_TOKEN
@@ -63,6 +62,8 @@ router.route('/update').post(async (req, res)=>{
             didDocument: req.body.didDocument            
         }
 
+        console.log("updata data", JSON.stringify(data))
+
         // prepare API request for DID update
         const token = process.env.CHEQD_CREDENTIAL_SERVICE_TOKEN
         const url = 'https://studio-api.cheqd.net/did/update';
@@ -72,7 +73,7 @@ router.route('/update').post(async (req, res)=>{
             'x-api-key': token
         };
 
-        // create DID using Credential service API offered by Cheqd
+        // update DID using Credential service API offered by Cheqd
         const resUpdateDid = await axios.post(
             url, 
             data, 

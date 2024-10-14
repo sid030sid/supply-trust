@@ -24,6 +24,7 @@ export default function SCDMS(props) {
     const [material, setMaterial] = React.useState("")
     const [materials, setMaterials] = React.useState([])
     const [checked, setChecked] = React.useState(false)
+    const [accessRequestUrl, setAccessRequestUrl] = React.useState("")
     const [newController, setNewController] = React.useState("")
 
     // document using Cheqd's credential serivce API which creates DIDs in internal secret mode
@@ -40,20 +41,40 @@ export default function SCDMS(props) {
         //uplaod file to ipfs
         const res = await axios.post(`/api-ipfs/upload?private=${checked}`, {data : eventInformationObj})
 
-
         //get ipfs path
-        const ipfsPath = res.data //TODO in future: extract IPFS CID from Moralis url for IPFS file
+        const cid = res.data
 
+        //if checked true, then ipfs file with event metadata is private and service endpoint for requesting access to ipfs file must be included in did doc
+        const serviceEndpoints = []
+        if(checked && accessRequestUrl !== ""){
+            if(event === "producing" | event === "manufacturing"){
+                serviceEndpoints.push(
+                    {
+                        "idFragment": "requestAccessUrl",
+                        "type": "LinkedDomains",
+                        "serviceEndpoint": [accessRequestUrl]
+                    }
+                )
+            }else{
+                serviceEndpoints.push(
+                    {
+                        "id": did+"#requestAccessUrl",
+                        "type": "LinkedDomains",
+                        "serviceEndpoint": [accessRequestUrl]
+                    }
+                )
+            }
+        }
         if(event === "producing"){
 
             // create endpoints for services in did doc
-            const serviceEndpoints = [
+            serviceEndpoints.push(
                 {
                     "idFragment": "ipfs",
                     "type": "LinkedDomains",
-                    "serviceEndpoint": [ipfsPath]
+                    "serviceEndpoint": [cid]
                 }
-            ]
+            )
 
             // create did
             const didCreationRes = await axios.post("/api-credential-service/create", {services:serviceEndpoints})
@@ -73,15 +94,14 @@ export default function SCDMS(props) {
                     1. update service with id: "...#ipfs"
                     2. update controller to be newController --> TODO in future (once Cheqd bug fixed)
                 */
-                currentDidDoc.service = [ // update endpoint of service with id: "...#ipfs"
-                    {
-                      "id": did+"#ipfs",
-                      "type": "LinkedDomains",
-                      "serviceEndpoint": [
-                        ipfsPath                        
-                      ]
-                    }
-                ]
+                serviceEndpoints.push({
+                    "id": did+"#ipfs",
+                    "type": "LinkedDomains",
+                    "serviceEndpoint": [
+                      cid                        
+                    ]
+                  })
+                currentDidDoc.service = serviceEndpoints // update endpoint of service with id: "...#ipfs"
 
                 // get verfication method of newController
                     //const didResObjNewController = await axios.get("https://resolver.cheqd.net/1.0/identifiers/"+newController, {headers:{"Accept" : "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"}})
@@ -121,15 +141,17 @@ export default function SCDMS(props) {
                     /* update local did doc of to be updated did for receiving event
                         1. update service with id: "...#ipfs"
                     */
-                    currentDidDoc.service = [ // update endpoint of service with id: "...#ipfs"
+                    serviceEndpoints.push(
                         {
-                        "id": did+"#ipfs",
-                        "type": "LinkedDomains",
-                        "serviceEndpoint": [
-                            ipfsPath                        
-                        ]
+                            "id": did+"#ipfs",
+                            "type": "LinkedDomains",
+                            "serviceEndpoint": [
+                                cid                        
+                            ]
                         }
-                    ]
+                    )
+                    currentDidDoc.service = serviceEndpoints // update endpoint of service with id: "...#ipfs"
+                    
 
                     // prepare data for request to backend
                     const data = {
@@ -152,13 +174,13 @@ export default function SCDMS(props) {
                 }else{ //case of manufacturing
 
                     // create service endpoints to reference metadata stored on IPFS
-                    const serviceEndpoints = [
+                    serviceEndpoints.push(
                         {
                             "idFragment": "ipfs",
                             "type": "LinkedDomains",
-                            "serviceEndpoint": [ipfsPath]
+                            "serviceEndpoint": [cid]
                         }
-                    ]
+                    )
 
                     // add material endpoints which store DID of materials used for manufactured product
                     var idx = 0
@@ -223,6 +245,21 @@ export default function SCDMS(props) {
                             label="Document privately?" 
                         />
                     </FormGroup>
+                    {
+                        checked?
+                            <TextField
+                                margin="normal"
+                                fullWidth
+                                id="Access Request URL"
+                                label="Access Request URL"
+                                name="Access Request URL"
+                                value={accessRequestUrl}
+                                onChange={(e) => setAccessRequestUrl(e.target.value)}
+                                helperText="Provide URL for others to reach you to request access to private supply chain event metadata."
+                            />
+                        :
+                        ""
+                    }
                 </FormControl>
                 {
                     event === "shipping" | event === "receiving" ?

@@ -65,22 +65,10 @@ router.route('/download/:cid').get(async (req, res) => {
         if (cid === "") {
             return res.status(400).send("ERROR - Invalid query: missing cid in params");
         }
-
+        console.log("error abou to be thrown")
         let data;
         // Attempt to download file from public IPFS
-        try {
-            data = await ipfsApi.gateways.get(cid);
-        } catch (err) {
-            // If the error is an AuthenticationError from Pinata, then the requested ipfs file is private
-            if (err.statusCode === 403 && err.details.includes("The owner of this gateway does not have this content pinned")) {
-                
-                // get file from private ipfs
-                data = await fileApi.gateways.get(cid);
-            } else {
-                // If it's not an AuthenticationError, throw it further
-                throw err;
-            }
-        }
+        data = await ipfsApi.gateways.get(cid);
 
         // If data was found, send it to the client
         if (data) {
@@ -89,8 +77,13 @@ router.route('/download/:cid').get(async (req, res) => {
             return res.status(404).send("File not found on IPFS");
         }
     } catch (error) {
-        console.error("Error in download route:", error);
-        return res.status(500).send("Server error");
+        if (error.statusCode === 403 && error.details.includes("The owner of this gateway does not have this content pinned")) {
+            // get file from private ipfs
+            data = await fileApi.gateways.get(cid);
+        } else {
+            console.error("Error in download route:", error);
+            return res.status(500).send("Server error");
+        }
     }
 });
 

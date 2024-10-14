@@ -7,6 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Link } from '@mui/material';
+import LockIcon from '@mui/icons-material/Lock';
 
 export default function TracingTable(props) {
 
@@ -31,6 +32,10 @@ export default function TracingTable(props) {
               </TableCell>
               <TableCell align="right">
                 <Link href={"trace-and-track/"+event.service.find(i=>{return(i.id.includes("ipfs"))})?.serviceEndpoint[0]}>
+                  {event.service.find(i=>{return(i.id.includes("accessRequestUrl"))})? 
+                    <LockIcon/>
+                    : ""
+                  }
                     See details
                 </Link>
               </TableCell>
