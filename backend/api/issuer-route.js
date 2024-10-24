@@ -1,5 +1,12 @@
 const router = require('express').Router();
-const serverURL = "http://localhost:3001/api-issuer";
+const crypto = require("crypto")
+require("dotenv").config();
+
+const serverURL = process.env.BASE_URL+"/api-issuer";
+
+const generateNonce = (length = 12) => {
+  return crypto.randomBytes(length).toString("hex");
+}
 /*
 import jwt from "jsonwebtoken";
 import fs from "fs";
@@ -45,19 +52,64 @@ const offerMap = new Map();
 
 // offer credential that proves ownership of cid
 router.post("/offer", (req, res) => {
-  const uuid = randomUUID();
-  const pre_authorized_code = generateNonce(32);
+  
+  // get cid to which ipfs credential is issued
   const cid = req.body.cid
+
+  // get requested credential type and checck its validness
+  const credentialType = req.body.credentialType
+  if(credentialType !== "PrivateIpfsAccessCredential" & credentialType !== "PrivateIpfsOwnershipCredential"){
+    res.status(400).send("Invalid credential type")
+  }
+
+  // create credential offer uuid and pre-authorized code
+  const uuid = crypto.randomUUID();
+  const pre_authorized_code = generateNonce(32);
+
+  // prepare credential subject based on cid and credential type
   const credentialData = {
     credentialSubject: {
       cid: cid
     },
-    type: ["PrivateIpfsAccessCredential"]
+    type: ["VerifiableCredential", credentialType]
   }
-  offerMap.set(uuid, { issuer_state, pre_authorized_code, credentialData });
 
+  // create credential offer
+  offerMap.set(uuid, { pre_authorized_code, credentialData });
+
+  // send credential offer uri for user to obtain credential via wallet
   let credentialOffer = `openid-credential-offer://?credential_offer_uri=${serverURL}/credential-offer/${uuid}`;
   res.send(credentialOffer);
+});
+
+router.route("/credential-offer/:id").get((req, res) => {
+  const entry = offerMap.get(req.params.id);
+  let pre_auth_code;
+  let credentialData;
+
+  if (entry) {
+    ({
+      pre_authorized_code: pre_auth_code,
+      credentialData,
+    } = entry);
+
+    if (pre_auth_code) { //TODO: understand why this step is done for pre-auth code flow???
+      offerMap.set(pre_auth_code, credentialData);
+    }
+  }
+
+  const response = {
+    credential_issuer: `${serverURL}`,
+    credentials: credentialData.type,
+    grants: {
+      "urn:ietf:params:oauth:grant-type:pre-authorized_code": {
+        "pre-authorized_code": pre_auth_code ?? crypto.randomUUID(), //TODO: understand why this step is done for pre-auth code flow???
+        user_pin_required: false,
+      },
+    },
+  };
+
+  res.status(200).send(response);
 });
 
 /*
@@ -151,9 +203,8 @@ router.route("/credential").post(authenticateToken, (req, res) => {
 router.route("/.well-known/openid-credential-issuer").get((req, res) => {
   const metadata = {
     credential_issuer: `${serverURL}`,
-    authorization_server: `TODO`,
     credential_endpoint: `${serverURL}/credential`,
-    credential_response_encryption: {
+    credential_response_encryption: { //TODO: think about removing as only optional
       alg_values_supported: ["ECDH-ES"],
       enc_values_supported: ["A128GCM"],
       encryption_required: false,
@@ -162,8 +213,8 @@ router.route("/.well-known/openid-credential-issuer").get((req, res) => {
       {
         name: "SupplyTrust",
         locale: "en-US",
-        logo: {
-          url: "https://www.coywolf.news/wp-content/uploads/2021/05/pinata-logo.webp" //TODO reüplace with self made logo for trust supply
+        logo: { //TODO: logo's attribute should actually be uri not url according to OID4VCI
+          url: "https://www.coywolf.news/wp-content/uploads/2021/05/pinata-logo.webp" //TODO replace with self made logo for trust supply
         },
       },
     ],
@@ -202,53 +253,45 @@ router.route("/.well-known/openid-credential-issuer").get((req, res) => {
             text_color: "#FFFFFF",
           },
         ],
+      },
+      PrivateIpfsAccessCredential: {
+        format: "jwt_vc_json",
+        scope: "PrivateIpfsOwnershipCredential",
+        cryptographic_binding_methods_supported: ["did:example"],
+        credential_signing_alg_values_supported: ["ES256"],
+        credential_definition: {
+          type: ["VerifiableCredential", "PrivateIpfsOwnershipCredential"],
+          credentialSubject: {
+            cid: {
+              display: [
+                {
+                  name: "CID",
+                  locale: "en-US",
+                },
+              ],
+            }
+          },
+        },
+        proof_types_supported: {
+          jwt: {
+            proof_signing_alg_values_supported: ["ES256"],
+          },
+        },
+        display: [
+          {
+            name: "Private IPFS Ownership Credential powered by Pinata",
+            locale: "en-US",
+            logo: {
+              url: "https://docs.ipfs.tech/images/ipfs-logo.svg",
+            },
+            background_color: "#12107c",
+            text_color: "#FFFFFF",
+          },
+        ],
       }
     },
   };
   res.status(200).send(metadata);
-});
-
-router.route("/credential-offer/:id").get((req, res) => {
-  const entry = offerMap.get(req.params.id);
-  let iss_state;
-  let pre_auth_code;
-  let credentialData;
-
-  if (entry) {
-    ({
-      issuer_state: iss_state,
-      pre_authorized_code: pre_auth_code,
-      credentialData,
-    } = entry);
-
-    console.log(credentialData);
-
-    if (iss_state) {
-      offerMap.set(iss_state, credentialData);
-    }
-
-    if (pre_auth_code) {
-      offerMap.set(pre_auth_code, credentialData);
-    }
-  }
-
-  console.log(iss_state, pre_auth_code);
-
-  const response = {
-    credential_issuer: `${serverURL}`,
-    credentials: ["PrivateIpfsAccessCredential"],
-    grants: {
-      authorization_code: {
-        issuer_state: iss_state ?? randomUUID(),
-      },
-      "urn:ietf:params:oauth:grant-type:pre-authorized_code": {
-        "pre-authorized_code": pre_auth_code ?? randomUUID(),
-        user_pin_required: false,
-      },
-    },
-  };
-
-  res.status(200).send(response);
 });
 
 module.exports = router;
