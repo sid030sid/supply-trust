@@ -14,6 +14,7 @@ import Checkbox from '@mui/material/Checkbox';
 import axios from 'axios';
 import AddMetadataPopUpForm from './subcomponents/AddMetadataPopUpForm';
 import { TextField } from '@mui/material';
+import QrCodePopUp from './subcomponents/QrCodePopUp';
 
 export default function SCDMS(props) {
 
@@ -26,6 +27,11 @@ export default function SCDMS(props) {
     const [checked, setChecked] = React.useState(false)
     const [accessRequestUrl, setAccessRequestUrl] = React.useState("")
     const [newController, setNewController] = React.useState("")
+    const [credentialOfferUrl, setCredentialOfferUrl] = React.useState("")
+
+    const handleQrCodePopUpClose = () => {
+        setCredentialOfferUrl("")
+    }
 
     // document using Cheqd's credential serivce API which creates DIDs in internal secret mode
     const documentWithCheqdCredentialService = async () => {
@@ -65,6 +71,8 @@ export default function SCDMS(props) {
                 )
             }
         }
+
+        // create did or update did depending on supply chain event
         if(event === "producing"){
 
             // create endpoints for services in did doc
@@ -199,9 +207,20 @@ export default function SCDMS(props) {
                     const didCreationRes = await axios.post("/api-credential-service/create", {services: serviceEndpoints})
 
                     if(didCreationRes){
-                        alert("Your newly created DID has ID: "+didCreationRes.data.did)
+                        setCredentialOfferUrl(didCreationRes.data.did)
                     }
                 }
+            }
+        }
+
+        // if supply chain event metadata file in ipfs is private, then TrustSupply issues VC using pre-authorized code flow folowing OID4VCI#
+        if(checked){
+            // create credential offer
+            const credentialOfferRes = await axios.post("/api-issuer/credential-offer", {cid: cid})
+
+            // if credential offer created, then pop-up QR code for user to claim VC offer
+            if(credentialOfferRes){
+                alert("Credential offer created. URL: "+credentialOfferRes.data)
             }
         }
     }
@@ -373,6 +392,7 @@ export default function SCDMS(props) {
                 }
             </Box>
         </Box>
+        <QrCodePopUp open={credentialOfferUrl? true : false} handleClose={handleQrCodePopUpClose} url={credentialOfferUrl}></QrCodePopUp>
         </Container>
     );
 }

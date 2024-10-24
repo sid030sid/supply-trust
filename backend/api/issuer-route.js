@@ -1,4 +1,6 @@
 const router = require('express').Router();
+const serverURL = "http://localhost:3001/api-issuer";
+/*
 import jwt from "jsonwebtoken";
 import fs from "fs";
 import { generateNonce } from "./cryptoUtils.js";
@@ -35,14 +37,15 @@ const authenticateToken = async (req, res, next) => {
   }
   next();
 };
+*/
 
 /* +++++++++++++++++++ Issuer Endpoints ++++++++++++++++++++++++ */
 
 const offerMap = new Map();
 
+// offer credential that proves ownership of cid
 router.post("/offer", (req, res) => {
   const uuid = randomUUID();
-  const issuer_state = randomUUID();
   const pre_authorized_code = generateNonce(32);
   const cid = req.body.cid
   const credentialData = {
@@ -57,6 +60,7 @@ router.post("/offer", (req, res) => {
   res.send(credentialOffer);
 });
 
+/*
 router.route("/credential").post(authenticateToken, (req, res) => {
   const token = req.headers["authorization"].split(" ")[1];
   const { credential_identifier } = jwt.decode(token);
@@ -143,11 +147,11 @@ router.route("/credential").post(authenticateToken, (req, res) => {
     c_nonce_expires_in: 86400,
   });
 });
-
+*/
 router.route("/.well-known/openid-credential-issuer").get((req, res) => {
   const metadata = {
     credential_issuer: `${serverURL}`,
-    authorization_server: `${authServerURL}`,
+    authorization_server: `TODO`,
     credential_endpoint: `${serverURL}/credential`,
     credential_response_encryption: {
       alg_values_supported: ["ECDH-ES"],
@@ -156,54 +160,30 @@ router.route("/.well-known/openid-credential-issuer").get((req, res) => {
     },
     display: [
       {
-        name: "Trust CV", //"Technical University of Berlin",
+        name: "SupplyTrust",
         locale: "en-US",
         logo: {
-          url: "https://8cb0-149-233-55-5.ngrok-free.app/_next/image?url=%2Ftrust-cv-logo.png&w=256&q=75",
-          //url: "https://logowik.com/content/uploads/images/technischen-universitat-berlin1469.jpg",
+          url: "https://www.coywolf.news/wp-content/uploads/2021/05/pinata-logo.webp" //TODO reüplace with self made logo for trust supply
         },
       },
     ],
     credential_configurations_supported: {
-      UniversityDegreeCredential: {
+      PrivateIpfsAccessCredential: {
         format: "jwt_vc_json",
-        scope: "UniversityDegree",
+        scope: "PrivateIpfsAccessCredential",
         cryptographic_binding_methods_supported: ["did:example"],
         credential_signing_alg_values_supported: ["ES256"],
         credential_definition: {
-          type: ["VerifiableCredential", "UniversityDegreeCredential"],
+          type: ["VerifiableCredential", "PrivateIpfsAccessCredential"],
           credentialSubject: {
-            given_name: {
+            cid: {
               display: [
                 {
-                  name: "Given Name",
+                  name: "CID",
                   locale: "en-US",
                 },
               ],
-            },
-            family_name: {
-              display: [
-                {
-                  name: "Surname",
-                  locale: "en-US",
-                },
-              ],
-            },
-            degree: {
-              display: [
-                {
-                  name: "Degree Name",
-                  locale: "en-US",
-                },
-              ],
-            },
-            gpa: {
-              display: [
-                {
-                  name: "GPA",
-                },
-              ],
-            },
+            }
           },
         },
         proof_types_supported: {
@@ -213,59 +193,16 @@ router.route("/.well-known/openid-credential-issuer").get((req, res) => {
         },
         display: [
           {
-            name: "University Credential",
+            name: "Private IPFS Access Credential powered by Pinata",
             locale: "en-US",
             logo: {
-              url: "https://logowik.com/content/uploads/images/technischen-universitat-berlin1469.jpg",
+              url: "https://docs.ipfs.tech/images/ipfs-logo.svg",
             },
             background_color: "#12107c",
             text_color: "#FFFFFF",
           },
         ],
-      },
-      LoginCredentials: {
-        format: "jwt_vc_json",
-        scope: "Login",
-        cryptographic_binding_methods_supported: ["did:example"],
-        credential_signing_alg_values_supported: ["ES256"],
-        credential_definition: {
-          type: ["VerifiableCredential", "LoginCredential"],
-          credentialSubject: {
-            userId: {
-              display: [
-                {
-                  name: "userId",
-                  locale: "en-US",
-                },
-              ],
-            },
-            email: {
-              display: [
-                {
-                  name: "email",
-                  locale: "en-US",
-                },
-              ],
-            },
-          },
-        },
-        proof_types_supported: {
-          jwt: {
-            proof_signing_alg_values_supported: ["ES256"],
-          },
-        },
-        display: [
-          {
-            name: "Login Credential",
-            locale: "en-US",
-            logo: {
-              url: "https://57a9-149-233-55-5.ngrok-free.app/_next/image?url=%2Ftrust-cv-logo.png&w=384&q=75",
-            },
-            background_color: "#12107c",
-            text_color: "#FFFFFF",
-          },
-        ],
-      },
+      }
     },
   };
   res.status(200).send(metadata);
@@ -299,19 +236,19 @@ router.route("/credential-offer/:id").get((req, res) => {
 
   const response = {
     credential_issuer: `${serverURL}`,
-    credentials: credentialData
-      ? credentialData.type
-      : ["UniversityDegreeCredential"],
+    credentials: ["PrivateIpfsAccessCredential"],
     grants: {
       authorization_code: {
         issuer_state: iss_state ?? randomUUID(),
       },
       "urn:ietf:params:oauth:grant-type:pre-authorized_code": {
         "pre-authorized_code": pre_auth_code ?? randomUUID(),
-        user_pin_required: true,
+        user_pin_required: false,
       },
     },
   };
 
   res.status(200).send(response);
 });
+
+module.exports = router;

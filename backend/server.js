@@ -19,6 +19,10 @@ app.use("/api-ipfs", apiIpfsRouter);
 const apiCredentialServiceRouter = require("./api/cheqd-credential-service-api-route.js");
 app.use("/api-credential-service", apiCredentialServiceRouter);
 
+// use API for issuer service
+const apiIssuerRouter = require("./api/issuer-route.js");
+app.use("/api-issuer", apiIssuerRouter);
+
 //if production give app static assets (e.g. favicon and all routes)
 if(process.env.NODE_ENV === "production"){
   // allow app to use static files of build folder
