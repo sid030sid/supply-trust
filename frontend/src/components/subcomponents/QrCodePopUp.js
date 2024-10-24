@@ -6,6 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import QRCode from "react-qr-code";
+import { Link } from '@mui/material';
 
 export default function QrCodePopUp(props) {
 
@@ -22,6 +23,10 @@ export default function QrCodePopUp(props) {
                     <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
                         <QRCode value={props.url}/>
                     </div>
+                    <br></br>
+                    <DialogContentText>
+                        NOTE: To obtain verifiabel credentials wallets are needed. We recommend using grant.io's  <Link href="https://igrant.io/datawallet.html">Data Wallet</Link>.         
+                    </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={props.handleClose}>Close</Button>

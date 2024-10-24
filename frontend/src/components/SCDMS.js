@@ -27,7 +27,7 @@ export default function SCDMS(props) {
     const [checked, setChecked] = React.useState(false)
     const [accessRequestUrl, setAccessRequestUrl] = React.useState("")
     const [newController, setNewController] = React.useState("")
-    const [credentialOfferUrl, setCredentialOfferUrl] = React.useState("")
+    const [credentialOfferUrl, setCredentialOfferUrl] = React.useState("https://igrant.io/datawallet.html")
 
     const handleQrCodePopUpClose = () => {
         setCredentialOfferUrl("")
