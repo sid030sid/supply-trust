@@ -1,8 +1,12 @@
 const router = require('express').Router();
 const crypto = require("crypto")
+const jwt = require('jsonwebtoken');
+const fs = require("fs")
+
 require("dotenv").config();
 
 const serverURL = process.env.BASE_URL+"/api-issuer";
+const authServerURL = process.env.BASE_URL+"/api-auth";
 
 const generateNonce = (length = 12) => {
   return crypto.randomBytes(length).toString("hex");
@@ -10,13 +14,11 @@ const generateNonce = (length = 12) => {
 /*
 import jwt from "jsonwebtoken";
 import fs from "fs";
-import { generateNonce } from "./cryptoUtils.js";
-import { randomUUID } from "crypto";
 
 const serverURL = "https://3f34-149-233-55-5.ngrok-free.app";
 const authServerURL = "https://a3cb-149-233-55-5.ngrok-free.app";
 const privateKey = fs.readFileSync("./certs/private.pem", "utf8");
-
+*/
 
 
 // Middleware to authenticate access tokens
@@ -44,7 +46,7 @@ const authenticateToken = async (req, res, next) => {
   }
   next();
 };
-*/
+
 
 /* +++++++++++++++++++ Issuer Endpoints ++++++++++++++++++++++++ */
 
@@ -112,11 +114,13 @@ router.route("/credential-offer/:id").get((req, res) => {
   res.status(200).send(response);
 });
 
-/*
-router.route("/credential").post(authenticateToken, (req, res) => {
-  const token = req.headers["authorization"].split(" ")[1];
-  const { credential_identifier } = jwt.decode(token);
+router.route("/credential").post((req, res) => {
 
+  // get pre-authorization code from authorization access token
+    //const token = req.headers["authorization"].split(" ")[1];
+  const credential_identifier = req.headers["authorization"].split(" ")[1]; // note: credential_identifier is the pre-authorization code
+
+  // get proof of user's ownership of private key
   const requestBody = req.body;
   let decodedWithHeader;
   let decodedHeaderSubjectDID;
@@ -124,32 +128,17 @@ router.route("/credential").post(authenticateToken, (req, res) => {
     decodedWithHeader = jwt.decode(requestBody.proof.jwt, { complete: true });
     decodedHeaderSubjectDID = decodedWithHeader.payload.iss;
   }
+
+  // get credential offer
   const credentialData = offerMap.get(credential_identifier);
 
-  console.log(credentialData);
-  let credentialSubject = credentialData
-    ? {
-        id: decodedHeaderSubjectDID,
-        ...credentialData.credentialSubject,
-        issuance_date: new Date(
-          Math.floor(Date.now() / 1000) * 1000
-        ).toISOString(),
-      }
-    : {
-        id: decodedHeaderSubjectDID,
-        family_name: "Doe",
-        given_name: "John",
-        birth_date: "1990-01-01",
-        degree: "Bachelor of Computer Science",
-        gpa: "1.2",
-        age_over_18: true,
-        issuance_date: new Date(
-          Math.floor(Date.now() / 1000) * 1000
-        ).toISOString(),
-        // expiry_date: new Date(
-        //   Math.floor(Date.now() + 60 / 1000) * 1000
-        // ).toISOString(),
-      };
+  let credentialSubject = {
+    id: decodedHeaderSubjectDID, //did of user attempting to obtain vc
+    ...credentialData.credentialSubject,
+    issuance_date: new Date(
+      Math.floor(Date.now() / 1000) * 1000
+    ).toISOString(),
+  }
 
   const payload = {
     iss: serverURL,
@@ -166,32 +155,20 @@ router.route("/credential").post(authenticateToken, (req, res) => {
         Math.floor(Date.now() / 1000) * 1000
       ).toISOString(),
       issued: new Date(Math.floor(Date.now() / 1000) * 1000).toISOString(),
-      issuer: "did:ebsi:zrZZyoQVrgwpV1QZmRUHNPz",
-      type: credentialData
-        ? credentialData.type
-        : ["UniversityDegreeCredential"],
+      issuer: process.env.ISSUER_DID,
+      type: credentialData.type,
       "@context": [
         "https://www.w3.org/2018/credentials/v1",
         "https://europa.eu/2018/credentials/eudi/pid/v1",
       ],
-      issuer: "did:ebsi:zrZZyoQVrgwpV1QZmRUHNPz",
       validFrom: new Date(Math.floor(Date.now() / 1000) * 1000).toISOString(),
     },
   };
-  const signOptions = {
-    algorithm: "ES256",
-  };
 
-  const additionalHeaders = {
-    kid: `did:ebsi:zrZZyoQVrgwpV1QZmRUHNPz#key-2`,
-    typ: "jwt",
-  };
+  // create vc
+  const idtoken = jwt.sign(payload, process.env.ISSUER_PRIVATE_KEY);
 
-  const idtoken = jwt.sign(payload, privateKey, {
-    ...signOptions,
-    header: additionalHeaders,
-  });
-
+  // send jwt_vc to user
   res.json({
     format: "jwt_vc",
     credential: idtoken,
@@ -199,7 +176,7 @@ router.route("/credential").post(authenticateToken, (req, res) => {
     c_nonce_expires_in: 86400,
   });
 });
-*/
+
 router.route("/.well-known/openid-credential-issuer").get((req, res) => {
   const metadata = {
     credential_issuer: `${serverURL}`,
