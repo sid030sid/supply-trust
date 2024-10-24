@@ -53,38 +53,37 @@ const authenticateToken = async (req, res, next) => {
 const offerMap = new Map();
 
 // offer credential that proves ownership of cid
-router.post("/offer", (req, res) => {
-  
-  // get cid to which ipfs credential is issued
-  const cid = req.body.cid
+router.post("/offer", async (req, res) => {
+    // get cid to which ipfs credential is issued
+    const cid = req.body.cid
 
-  // get requested credential type and checck its validness
-  const credentialType = req.body.credentialType
-  if(credentialType !== "PrivateIpfsAccessCredential" & credentialType !== "PrivateIpfsOwnershipCredential"){
-    res.status(400).send("Invalid credential type")
-  }
+    // get requested credential type and checck its validness
+    const credentialType = req.body.credentialType
+    if(credentialType !== "PrivateIpfsAccessCredential" & credentialType !== "PrivateIpfsOwnershipCredential"){
+      res.status(400).send("Invalid credential type")
+    }
 
-  // create credential offer uuid and pre-authorized code
-  const uuid = crypto.randomUUID();
-  const pre_authorized_code = generateNonce(32);
+    // create credential offer uuid and pre-authorized code
+    const uuid = crypto.randomUUID();
+    const pre_authorized_code = generateNonce(32);
 
-  // prepare credential subject based on cid and credential type
-  const credentialData = {
-    credentialSubject: {
-      cid: cid
-    },
-    type: ["VerifiableCredential", credentialType]
-  }
+    // prepare credential subject based on cid and credential type
+    const credentialData = {
+      credentialSubject: {
+        cid: cid
+      },
+      type: ["VerifiableCredential", credentialType]
+    }
 
-  // create credential offer
-  offerMap.set(uuid, { pre_authorized_code, credentialData });
+    // create credential offer
+    offerMap.set(uuid, { pre_authorized_code, credentialData });
 
-  // send credential offer uri for user to obtain credential via wallet
-  let credentialOffer = `openid-credential-offer://?credential_offer_uri=${serverURL}/credential-offer/${uuid}`;
-  res.send(credentialOffer);
+    // send credential offer uri for user to obtain credential via wallet
+    let credentialOffer = `openid-credential-offer://?credential_offer_uri=${serverURL}/credential-offer/${uuid}`;
+    res.send(credentialOffer);
 });
 
-router.route("/credential-offer/:id").get((req, res) => {
+router.route("/credential-offer/:id").get(async (req, res) => {
   const entry = offerMap.get(req.params.id);
   let pre_auth_code;
   let credentialData;
@@ -114,7 +113,7 @@ router.route("/credential-offer/:id").get((req, res) => {
   res.status(200).send(response);
 });
 
-router.route("/credential").post((req, res) => {
+router.route("/credential").post( async (req, res) => {
 
   // get pre-authorization code from authorization access token
     //const token = req.headers["authorization"].split(" ")[1];
@@ -177,7 +176,7 @@ router.route("/credential").post((req, res) => {
   });
 });
 
-router.route("/.well-known/openid-credential-issuer").get((req, res) => {
+router.route("/.well-known/openid-credential-issuer").get(async (req, res) => {
   const metadata = {
     credential_issuer: `${serverURL}`,
     credential_endpoint: `${serverURL}/credential`,

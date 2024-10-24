@@ -213,14 +213,14 @@ export default function SCDMS(props) {
             }
         }
 
-        // if supply chain event metadata file in ipfs is private, then TrustSupply issues VC using pre-authorized code flow folowing OID4VCI#
+        // if supply chain event metadata file in ipfs is private, then TrustSupply issues VC using pre-authorized code flow folowing OID4VCI
         if(checked){
             // create credential offer
-            const credentialOfferRes = await axios.post("/api-issuer/credential-offer", {cid: cid})
+            const credentialOfferRes = await axios.post("/api-issuer/offer", {cid: cid, credentialType: "PrivateIpfsOwnershipCredential"})
 
             // if credential offer created, then pop-up QR code for user to claim VC offer
             if(credentialOfferRes){
-                alert("Credential offer created. URL: "+credentialOfferRes.data)
+                setCredentialOfferUrl(credentialOfferRes.data)
             }
         }
     }
