@@ -193,6 +193,7 @@ router.route("/token").post(async (req, res) => {
     const { client_id, code, code_verifier, grant_type, user_pin } = req.body;
     const pre_authorized_code = req.body["pre-authorized_code"];
     let credential_identifier;
+    console.log("grant_type: ", grant_type);
     if (grant_type === "urn:ietf:params:oauth:grant-type:pre-authorized_code") {
       console.log("pre-auth code flow: ", pre_authorized_code);
   
