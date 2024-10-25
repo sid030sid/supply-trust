@@ -6,8 +6,46 @@ const fs = require("fs")
 
 require("dotenv").config();
 
+//global variables
 const serverURL = process.env.BASE_URL+"/api-issuer";
 const authServerURL = process.env.BASE_URL+"/api-auth";
+
+// In-memory storage
+const authorizationCodes = new Map();
+const accessTokens = new Map();
+
+//helper functions
+const generateAccessToken = (sub, credential_identifier) => {
+    const payload = {
+      iss: `${serverURL}`,
+      sub: sub,
+      aud: `${serverURL}`,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+      iat: Math.floor(Date.now() / 1000),
+      scope: "openid",
+      credential_identifier: credential_identifier,
+    };
+    // Sign the JWT
+    const token = jwt.sign(payload, process.env.ISSUER_PRIVATE_KEY);
+  
+    return token;
+}
+  
+const buildIdToken = (aud) => {
+    const payload = {
+      iss: `${serverURL}`,
+      sub: "user123",
+      aud: aud,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+      iat: Math.floor(Date.now() / 1000),
+      auth_time: Math.floor(Date.now() / 1000) - 60 * 5,
+      nonce: "nonceValue",
+    };
+  
+    const idToken = jwt.sign(payload, process.env.ISSUER_PRIVATE_KEY);
+  
+    return idToken;
+}
 
 router.route("/verifyAccessToken").post((req, res) => {
     const token = req.body.token;
@@ -71,7 +109,7 @@ router.route("/.well-known/openid-configuration").get((req, res) => {
     };
     res.status(200).send(config);
 });
-  
+
 router.route("/authorize").get((req, res) => {
     const {
       response_type,
@@ -165,18 +203,7 @@ router.route("/token").post(async (req, res) => {
       }
       credential_identifier = pre_authorized_code;
     } else {
-      if (grant_type == "authorization_code") {
-        console.log("authorization code workflow");
-        const codeVerifierHash = await base64UrlEncodeSha256(code_verifier);
-        const clientSession = authorizationCodes.get(client_id);
-        credential_identifier = clientSession.issuer_state;
-        if (
-          code !== clientSession.authCode ||
-          codeVerifierHash !== clientSession.codeChallenge
-        ) {
-          return res.status(400).send("Client could not be verified");
-        }
-      }
+        return res.status(400).send("Only pre-authorized_code grant type is supported!");
     }
     const generatedAccessToken = generateAccessToken(
       client_id,
@@ -192,3 +219,5 @@ router.route("/token").post(async (req, res) => {
       c_nonce_expires_in: 86400,
     });
 });
+
+module.exports = router;

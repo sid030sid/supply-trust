@@ -113,7 +113,7 @@ router.route("/credential-offer/:id").get(async (req, res) => {
   res.status(200).send(response);
 });
 
-router.route("/credential").post( async (req, res) => {
+router.route("/credential").post(authenticateToken, async (req, res) => {
 
   // get pre-authorization code from authorization access token
     //const token = req.headers["authorization"].split(" ")[1];

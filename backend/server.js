@@ -24,6 +24,10 @@ app.use("/api-credential-service", apiCredentialServiceRouter);
 const apiIssuerRouter = require("./api/issuer-route.js");
 app.use("/api-issuer", apiIssuerRouter);
 
+// use API for authentication service
+const apiAuthRouter = require("./api/auth-route.js");
+app.use("/api-auth", apiAuthRouter);
+
 //if production give app static assets (e.g. favicon and all routes)
 if(process.env.NODE_ENV === "production"){
   // allow app to use static files of build folder
