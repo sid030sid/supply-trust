@@ -230,7 +230,7 @@ router.route("/.well-known/openid-credential-issuer").get(async (req, res) => {
           },
         ],
       },
-      PrivateIpfsAccessCredential: {
+      PrivateIpfsOwnershipCredential: {
         format: "jwt_vc_json",
         scope: "PrivateIpfsOwnershipCredential",
         cryptographic_binding_methods_supported: ["did:example"],
