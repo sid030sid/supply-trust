@@ -116,9 +116,9 @@ router.route("/credential-offer/:id").get(async (req, res) => {
 router.route("/credential").post(authenticateToken, async (req, res) => {
 
   // get pre-authorization code from authorization access token
-    //const token = req.headers["authorization"].split(" ")[1];
-  const credential_identifier = req.headers["authorization"].split(" ")[1]; // note: credential_identifier is the pre-authorization code
-
+  const token = req.headers["authorization"].split(" ")[1];
+  const { credential_identifier } = jwt.decode(token);
+  
   // get proof of user's ownership of private key
   const requestBody = req.body;
   let decodedWithHeader;
