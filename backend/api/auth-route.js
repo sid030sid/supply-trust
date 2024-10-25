@@ -54,7 +54,7 @@ router.route("/verifyAccessToken").post((req, res) => {
       return res.status(400).send("Token is required");
     }
   
-    jwt.verify(token, publicKey, { algorithms: ["ES256"] }, (err, decoded) => {
+    jwt.verify(token, ISSUER_PUBLIC_KEY, (err, decoded) => {
       if (err) {
         return res.status(401).send("Invalid token");
       }
