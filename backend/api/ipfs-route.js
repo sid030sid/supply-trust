@@ -116,7 +116,7 @@ router.route('/download/:cid').get(async (req, res) => {
         if (cid === "") {
             return res.status(400).send("ERROR - Invalid query: missing cid in params");
         }
-        console.log("error abou to be thrown")
+        
         let data;
         // Attempt to download file from public IPFS
         data = await ipfsApi.gateways.get(cid);
