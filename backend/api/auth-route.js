@@ -196,6 +196,8 @@ router.route("/token").post(async (req, res) => {
     console.log("grant_type: ", grant_type);
     console.log("client_id: ", client_id);	
     console.log("user_pin", user_pin);
+
+    console.log("body of token endpoint:", JSON.stringify(req.body));
     if (grant_type === "urn:ietf:params:oauth:grant-type:pre-authorized_code") {
       console.log("pre-auth code flow: ", pre_authorized_code);
   
