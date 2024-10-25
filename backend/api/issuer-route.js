@@ -105,7 +105,7 @@ router.route("/credential-offer/:id").get(async (req, res) => {
     grants: {
       "urn:ietf:params:oauth:grant-type:pre-authorized_code": {
         "pre-authorized_code": pre_auth_code ?? crypto.randomUUID(), //TODO: understand why this step is done for pre-auth code flow???
-        //user_pin_required: true,
+        user_pin_required: true,
       },
     },
   };
@@ -179,6 +179,7 @@ router.route("/credential").post( async (req, res) => {
 router.route("/.well-known/openid-credential-issuer").get(async (req, res) => {
   const metadata = {
     credential_issuer: `${serverURL}`,
+    authorization_server: `${authServerURL}`,
     credential_endpoint: `${serverURL}/credential`,
     credential_response_encryption: { //TODO: think about removing as only optional
       alg_values_supported: ["ECDH-ES"],
