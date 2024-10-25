@@ -105,7 +105,7 @@ router.route("/credential-offer/:id").get(async (req, res) => {
     grants: {
       "urn:ietf:params:oauth:grant-type:pre-authorized_code": {
         "pre-authorized_code": pre_auth_code ?? crypto.randomUUID(), //TODO: understand why this step is done for pre-auth code flow???
-        user_pin_required: true,
+        //user_pin_required: true,
       },
     },
   };
