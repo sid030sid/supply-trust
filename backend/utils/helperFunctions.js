@@ -56,6 +56,7 @@ const pemToJWK = (pem, keyType) => {
     // Optionally, set or adjust JWK properties if necessary
     jwk.kty = "EC"; // Key Type
     jwk.crv = "P-256"; //"P-384"; // Curve (adjust as necessary based on your actual curve)
+    jwk.alg = "ES256"; // Algorithm
   
     return jwk;
 }
