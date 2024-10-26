@@ -42,5 +42,5 @@ const bs58toPem = async (base58Key, type) => {
 module.exports = {
     generateNonce,
     convertBase58ToJWK,
-    toPem
+    bs58toPem 
 };

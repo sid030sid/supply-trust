@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const fs = require("fs")
 
 // load in helper functions
-const {generateNonce, convertBase58ToJWK} = require("../utils/helperFunctions");
+const {generateNonce, convertBase58ToJWK, bs58toPem} = require("../utils/helperFunctions");
 
 require("dotenv").config();
 
