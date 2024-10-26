@@ -53,8 +53,6 @@ const buildIdToken = (aud) => {
 
 router.route("/verifyAccessToken").post((req, res) => {
     const token = req.body.token;
-    console.log("token in verifyAccessToken endpoint", token);
-    console.log("body in verifyAccessToken endpoint", JSON.stringify(req.body));
   
     if (!token) {
       return res.status(400).send("Token is required");

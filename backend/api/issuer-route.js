@@ -24,7 +24,6 @@ const privateKey = fs.readFileSync("./certs/private.pem", "utf8");
 // Middleware to authenticate access tokens
 const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
-  console.log("access token:", authHeader);
   const token = authHeader && authHeader.split(" ")[1];
   if (!token) return res.sendStatus(401);
   try {
@@ -40,7 +39,7 @@ const authenticateToken = async (req, res, next) => {
       return res.sendStatus(401);
     }
     const result = await response.text();
-    console.log(result);
+    console.log("authentication result:", result);
   } catch (error) {
     console.error("Error verifying token:", error);
   }
@@ -117,7 +116,6 @@ router.route("/credential").post(authenticateToken, async (req, res) => {
   
   // get pre-authorization code from authorization access token
   const token = req.headers["authorization"].split(" ")[1];
-  console.log("body in credential endpoint", req.body);
   const { credential_identifier } = jwt.decode(token);
 
   // get proof of user's ownership of private key
