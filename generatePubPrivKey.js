@@ -14,7 +14,7 @@ const toPem = (keyBytes, type) => {
 const createDidKey = async () => {
     // Generate an ECDSA key pair (P-256)
     const { publicKey, privateKey } = generateKeyPairSync('ec', {
-        namedCurve: 'secp256k1', // or 'prime256v1' for P-256
+        namedCurve: 'prime256v1', // or 'prime256v1' for P-256
         publicKeyEncoding: {
             type: 'spki',
             format: 'der'

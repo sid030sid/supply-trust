@@ -5,7 +5,7 @@ const fs = require("fs")
 require("dotenv").config();
 
 // load in helper functions
-const {generateNonce, bs58toPem} = require("../utils/helperFunctions");
+const {generateNonce} = require("../utils/helperFunctions");
 
 // global variables
 const serverURL = process.env.BASE_URL+"/api-issuer";
@@ -155,7 +155,7 @@ router.route("/credential").post(authenticateToken, async (req, res) => {
   };
 
   // create vc
-  const idtoken = jwt.sign(payload, privateKey, { algorithm: "ES256" }); // TODO: should be created using ES256????
+  const idtoken = jwt.sign(payload, privateKey, { algorithm: "ES256"}); // TODO: should be created using ES256????
 
   // send jwt_vc to user
   res.json({
