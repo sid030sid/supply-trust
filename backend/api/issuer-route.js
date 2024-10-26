@@ -117,7 +117,7 @@ router.route("/credential").post(authenticateToken, async (req, res) => {
   
   // get pre-authorization code from authorization access token
   const token = req.headers["authorization"].split(" ")[1];
-  console.log("token in credential endpoint", req.body);
+  console.log("body in credential endpoint", req.body);
   const { credential_identifier } = jwt.decode(token);
 
   // get proof of user's ownership of private key
@@ -134,7 +134,7 @@ router.route("/credential").post(authenticateToken, async (req, res) => {
 
   let credentialSubject = {
     id: decodedHeaderSubjectDID, //did of user attempting to obtain vc
-    ...credentialData.credentialSubject,
+    ...credentialData?.credentialSubject,
     issuance_date: new Date(
       Math.floor(Date.now() / 1000) * 1000
     ).toISOString(),
@@ -156,7 +156,7 @@ router.route("/credential").post(authenticateToken, async (req, res) => {
       ).toISOString(),
       issued: new Date(Math.floor(Date.now() / 1000) * 1000).toISOString(),
       issuer: process.env.ISSUER_DID,
-      type: credentialData.type,
+      type: credentialData?.type,
       "@context": [
         "https://www.w3.org/2018/credentials/v1",
         "https://europa.eu/2018/credentials/eudi/pid/v1",
