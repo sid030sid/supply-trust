@@ -3,53 +3,17 @@ const router = require('express').Router();
 const crypto = require("crypto")
 const jwt = require('jsonwebtoken');
 const fs = require("fs")
+const {generateAccessToken, generateNonce, convertBase58ToJWK} = require("../utils/helperFunctions");
 
 require("dotenv").config();
 
 //global variables
 const serverURL = process.env.BASE_URL+"/api-issuer";
 const authServerURL = process.env.BASE_URL+"/api-auth";
+const publicKeyAsJwk = convertBase58ToJWK(process.env.ISSUER_PUBLIC_KEY);
 
 // In-memory storage
-const authorizationCodes = new Map();
 const accessTokens = new Map();
-
-//helper functions
-const generateAccessToken = (sub, credential_identifier) => {
-    const payload = {
-      iss: `${serverURL}`,
-      sub: sub,
-      aud: `${serverURL}`,
-      exp: Math.floor(Date.now() / 1000) + 60 * 60,
-      iat: Math.floor(Date.now() / 1000),
-      scope: "openid",
-      credential_identifier: credential_identifier,
-    };
-    // Sign the JWT
-    const token = jwt.sign(payload, process.env.ISSUER_PRIVATE_KEY);
-  
-    return token;
-}
-
-const generateNonce = (length = 12) => {
-  return crypto.randomBytes(length).toString("hex");
-}
-  
-const buildIdToken = (aud) => {
-    const payload = {
-      iss: `${serverURL}`,
-      sub: "user123",
-      aud: aud,
-      exp: Math.floor(Date.now() / 1000) + 60 * 60,
-      iat: Math.floor(Date.now() / 1000),
-      auth_time: Math.floor(Date.now() / 1000) - 60 * 5,
-      nonce: "nonceValue",
-    };
-  
-    const idToken = jwt.sign(payload, process.env.ISSUER_PRIVATE_KEY);
-  
-    return idToken;
-}
 
 router.route("/verifyAccessToken").post((req, res) => {
     const token = req.body.token;
@@ -153,5 +117,15 @@ router.route("/token").post(async (req, res) => {
     c_nonce_expires_in: 86400,
   });
 });
+
+// endpoint for wallets to get jwks used by auth server to sign tokens
+router.route("/jwks").get((req,res) => {
+  res.json({
+    keys: [
+      { ...publicKeyAsJwk, kid: `${process.env.ISSUER_DID}#sig-key`, use: "sig" },
+      { ...publicKeyAsJwk, kid: `${process.env.ISSUER_DID}#authentication-key`, use: "keyAgreement" }
+    ],
+  });
+})
 
 module.exports = router;

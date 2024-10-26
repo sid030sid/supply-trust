@@ -2,24 +2,14 @@ const router = require('express').Router();
 const crypto = require("crypto")
 const jwt = require('jsonwebtoken');
 const fs = require("fs")
-
 require("dotenv").config();
 
+// load in helper functions
+const {generateNonce} = require("../utils/helperFunctions");
+
+// global variables
 const serverURL = process.env.BASE_URL+"/api-issuer";
 const authServerURL = process.env.BASE_URL+"/api-auth";
-
-const generateNonce = (length = 12) => {
-  return crypto.randomBytes(length).toString("hex");
-}
-/*
-import jwt from "jsonwebtoken";
-import fs from "fs";
-
-const serverURL = "https://3f34-149-233-55-5.ngrok-free.app";
-const authServerURL = "https://a3cb-149-233-55-5.ngrok-free.app";
-const privateKey = fs.readFileSync("./certs/private.pem", "utf8");
-*/
-
 
 // Middleware to authenticate access tokens
 const authenticateToken = async (req, res, next) => {
