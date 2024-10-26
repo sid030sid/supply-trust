@@ -15,7 +15,7 @@ const authServerURL = process.env.BASE_URL+"/api-auth";
 const publicKeyAsJwk = convertBase58ToJWK(process.env.ISSUER_PUBLIC_KEY);
 
 // In-memory storage
-const accessTokens = new Map();
+const accessTokens = new Map(); //TODO: optimize by using redis instead of in-memory storage
 
 // additional helper function
 const generateAccessToken = (sub, credential_identifier) =>{
@@ -29,7 +29,7 @@ const generateAccessToken = (sub, credential_identifier) =>{
     credential_identifier: credential_identifier,
   };
   // Sign the JWT
-  const token = jwt.sign(payload, process.env.ISSUER_PRIVATE_KEY);
+  const token = jwt.sign(payload, process.env.ISSUER_PRIVATE_KEY, { algorithm: "ES256" }); // TODO: should be created using ES256
 
   return token;
 }
@@ -40,8 +40,10 @@ router.route("/verifyAccessToken").post((req, res) => {
     if (!token) {
       return res.status(400).send("Token is required");
     }
-  
-    jwt.verify(token, process.env.ISSUER_PRIVATE_KEY, (err, decoded) => {
+    
+
+    // TODO: should be verified using ES256
+    jwt.verify(token, process.env.ISSUER_PUBLIC_KEY, { algorithm: "ES256" }, (err, decoded) => { //TODO: should by public key
       if (err) {
         return res.status(401).send("Invalid token");
       }

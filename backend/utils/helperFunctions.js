@@ -16,9 +16,11 @@ const convertBase58ToJWK = async (base58Key) =>{
 
     // Create the JWK object
     const jwk = {
-        kty: "OKP",              // Key Type for Ed25519
-        crv: "Ed25519",          // Curve for Ed25519
-        x: base64url             // Base64url encoded public key bytes
+        kty: "OKP", // Key Type for Ed25519
+        crv: "Ed25519", // Curve for Ed25519
+        x: base64url, // Base64url encoded public key bytes
+        alg: "EdDSA", // Algorithm (EdDSA for Ed25519)
+        use: "sig" // Public key use (sig for signature verification)
     };
 
     return jwk;

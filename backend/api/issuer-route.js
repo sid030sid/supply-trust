@@ -39,7 +39,7 @@ const authenticateToken = async (req, res, next) => {
 
 /* +++++++++++++++++++ Issuer Endpoints ++++++++++++++++++++++++ */
 
-const offerMap = new Map();
+const offerMap = new Map(); //TODO: optimize by using redis instead of in-memory storage
 
 // offer credential that proves ownership of cid
 router.post("/offer", async (req, res) => {
@@ -154,7 +154,7 @@ router.route("/credential").post(authenticateToken, async (req, res) => {
   };
 
   // create vc
-  const idtoken = jwt.sign(payload, process.env.ISSUER_PRIVATE_KEY);
+  const idtoken = jwt.sign(payload, process.env.ISSUER_PRIVATE_KEY, { algorithm: "ES256" }); // TODO: should be created using ES256????
 
   // send jwt_vc to user
   res.json({
