@@ -27,7 +27,7 @@ router.route('/upload').post(async (req, res)=>{
             res.send("ERROR - Invalid query: missing data in body")
         }
 
-        const filename = crypto.randomBytes(16).toString('base64'); //create nonce to name file note: without name private ipfs by pinata does not work
+        const filename = crypto.randomBytes(16).toString('base64').replace("/",""); //create nonce to name file note: without name private ipfs by pinata does not work
         const file = new File([JSON.stringify(req.body.data)], filename, { type: "text/plain" });
 
         // upload file to private or public ipfs depending on configuration set by user in query 
