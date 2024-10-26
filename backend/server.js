@@ -11,6 +11,7 @@ app.use(cors());
 
 // For parsing application/json
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // to get data send by wallets into req.body
 
 // use API for IPFS
 const apiIpfsRouter = require("./api/ipfs-route");
