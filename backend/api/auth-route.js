@@ -3,7 +3,9 @@ const router = require('express').Router();
 const crypto = require("crypto")
 const jwt = require('jsonwebtoken');
 const fs = require("fs")
-const {generateAccessToken, generateNonce, convertBase58ToJWK} = require("../utils/helperFunctions");
+
+// load in helper functions
+const {generateNonce, convertBase58ToJWK} = require("../utils/helperFunctions");
 
 require("dotenv").config();
 
@@ -14,6 +16,23 @@ const publicKeyAsJwk = convertBase58ToJWK(process.env.ISSUER_PUBLIC_KEY);
 
 // In-memory storage
 const accessTokens = new Map();
+
+// additional helper function
+const generateAccessToken = (sub, credential_identifier) =>{
+  const payload = {
+    iss: `${serverURL}`,
+    sub: sub,
+    aud: `${serverURL}`,
+    exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    iat: Math.floor(Date.now() / 1000),
+    scope: "openid",
+    credential_identifier: credential_identifier,
+  };
+  // Sign the JWT
+  const token = jwt.sign(payload, process.env.ISSUER_PRIVATE_KEY);
+
+  return token;
+}
 
 router.route("/verifyAccessToken").post((req, res) => {
     const token = req.body.token;

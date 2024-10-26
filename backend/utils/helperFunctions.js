@@ -1,21 +1,5 @@
 const crypto = require("crypto")
 
-const generateAccessToken = (sub, credential_identifier) =>{
-    const payload = {
-      iss: `${serverURL}`,
-      sub: sub,
-      aud: `${serverURL}`,
-      exp: Math.floor(Date.now() / 1000) + 60 * 60,
-      iat: Math.floor(Date.now() / 1000),
-      scope: "openid",
-      credential_identifier: credential_identifier,
-    };
-    // Sign the JWT
-    const token = jwt.sign(payload, process.env.ISSUER_PRIVATE_KEY);
-  
-    return token;
-}
-
 const generateNonce = (length = 12) => {
   return crypto.randomBytes(length).toString("hex");
 }
@@ -41,7 +25,6 @@ const convertBase58ToJWK = async (base58Key) =>{
 }
 
 module.exports = {
-    generateAccessToken,
     generateNonce,
     convertBase58ToJWK,
 };
