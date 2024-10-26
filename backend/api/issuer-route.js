@@ -5,11 +5,12 @@ const fs = require("fs")
 require("dotenv").config();
 
 // load in helper functions
-const {generateNonce} = require("../utils/helperFunctions");
+const {generateNonce, bs58toPem} = require("../utils/helperFunctions");
 
 // global variables
 const serverURL = process.env.BASE_URL+"/api-issuer";
 const authServerURL = process.env.BASE_URL+"/api-auth";
+const privateKey = bs58toPem(process.env.ISSUER_PRIVATE_KEY, "PRIVATE").toString('utf-8');
 
 // Middleware to authenticate access tokens
 const authenticateToken = async (req, res, next) => {
@@ -154,7 +155,7 @@ router.route("/credential").post(authenticateToken, async (req, res) => {
   };
 
   // create vc
-  const idtoken = jwt.sign(payload, process.env.ISSUER_PRIVATE_KEY, { algorithm: "ES256" }); // TODO: should be created using ES256????
+  const idtoken = jwt.sign(payload, privateKey, { algorithm: "ES256" }); // TODO: should be created using ES256????
 
   // send jwt_vc to user
   res.json({

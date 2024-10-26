@@ -26,7 +26,21 @@ const convertBase58ToJWK = async (base58Key) =>{
     return jwk;
 }
 
+const bs58toPem = async (base58Key, type) => {
+    // import library for base58 encoding
+    const bs58 = await import("bs58");
+
+    // Decode the base58 public key into bytes
+    const keyBytes = bs58.default.decode(base58Key);
+
+    // Convert to Pem format
+    const keyBase64 = Buffer.from(keyBytes).toString('base64');
+    const pem = `-----BEGIN ${type} KEY-----\n${keyBase64.match(/.{1,64}/g).join('\n')}\n-----END ${type} KEY-----`;
+    return pem;
+};
+
 module.exports = {
     generateNonce,
     convertBase58ToJWK,
+    toPem
 };
