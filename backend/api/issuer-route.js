@@ -154,13 +154,19 @@ router.route("/credential").post(authenticateToken, async (req, res) => {
     },
   };
 
+  const additionalHeaders = {
+    kid: `${process.env.ISSUER_DID}#sig-key`,
+    alg: "ES256",
+    typ: "JWT",
+  };
+
   // create vc
-  const idtoken = jwt.sign(payload, privateKey, { algorithm: "ES256"}); // TODO: should be created using ES256????
+  const vc_jwt = jwt.sign(payload, privateKey, { algorithm: "ES256", header: additionalHeaders}); // TODO: should be created using ES256????
 
   // send jwt_vc to user
   res.json({
     format: "jwt_vc",
-    credential: idtoken,
+    credential: vc_jwt,
     c_nonce: generateNonce(),
     c_nonce_expires_in: 86400,
   });
