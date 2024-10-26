@@ -125,15 +125,11 @@ export default function InputForTracing(props) {
                 </Button>
                 <div>
                     <Typography component="h3" variant="h5" sx={{marginBottom:3}}>
-                        did with public ipfs file: did:cheqd:testnet:2377d740-5876-4ccb-9fef-9d9c7ee3996d
+                        did with public ipfs file: ???
                     </Typography>
                     <Typography component="h3" variant="h5" sx={{marginBottom:3}}>
-                        did with private ipfs file: did:cheqd:testnet:786b2111-79bf-4064-9901-8e8cdef3a18f
+                        did with private ipfs file: did:cheqd:testnet:444caf1b-2ab4-410b-a981-8d67d01a2285
                     </Typography>
-                    <Typography component="h3" variant="h5" sx={{marginBottom:3}}>
-                        previous did with private ipfs file: did:cheqd:testnet:8ca9505f-4ae9-40f5-850a-790a149c0442
-                    </Typography>
-                    
                 </div>
             </Box>
             {history?.length === 0 ? 

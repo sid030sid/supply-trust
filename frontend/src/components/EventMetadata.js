@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useParams, useNavigate} from 'react-router-dom';
 import axios from 'axios';
+import QRCode from "react-qr-code";
 import { CID } from 'multiformats/cid'
 
 // helper function
@@ -18,7 +19,10 @@ const EventMetadata = () => {
     // get cid of ipfs file from params
     const { cid } = useParams();
 
+    // state variables
     const [eventMetadata, setEventMetadata] = React.useState(null)
+    const [oid4vpUrl, setOid4vpUrl] = React.useState(null)
+    const [verified, setVerified] = React.useState(false) //this is set to true after oid4vp is performed successfully
 
     const navigate = useNavigate()
 
@@ -37,10 +41,13 @@ const EventMetadata = () => {
             if(res.data?.data?.event !== null){
                 setEventMetadata(res.data.data)
             }else{
+                setEventMetadata("private") //if private, verify vc_jwt of user and then show data to user
 
+                //get oid4vp url from verifier service
+                    //TODO: call endpoint and then call setOid4vpUrl OR navigate to "trace-and-track/cid/verify" page!!! which redirects after successfull oid4vp back to this page with "trace-and-track/cid"??? --> no to complicated
             }
 
-            //if private, verify vc_jwt of user and then show data to user
+            
         }catch(e){
             console.log(e)
         }
@@ -50,13 +57,15 @@ const EventMetadata = () => {
     React.useEffect( () => {
         onMountFunction()
     }, []);
+
+
     return(
         <div>
             {eventMetadata?
-                eventMetadata === "private"?
+                eventMetadata === "private" & oid4vpUrl?
                     <div>
                         <h1>Supply chain event metadata stored in IPFS file {cid} is private. Please present VC so that SupplyTrust can verify your access right for private IPFS file: {cid}</h1>
-                        <h2>TODO: show QR code for verifiable presentation</h2>
+                        <QRCode value={oid4vpUrl}/>
                     </div>
                 :
                 <div>
