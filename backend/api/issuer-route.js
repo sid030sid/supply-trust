@@ -10,7 +10,7 @@ const {generateNonce, bs58toPem} = require("../utils/helperFunctions");
 // global variables
 const serverURL = process.env.BASE_URL+"/api-issuer";
 const authServerURL = process.env.BASE_URL+"/api-auth";
-const privateKey = bs58toPem(process.env.ISSUER_PRIVATE_KEY, "PRIVATE").toString('utf-8');
+const privateKey = fs.readFileSync("./certs/private.pem", "utf8");
 
 // Middleware to authenticate access tokens
 const authenticateToken = async (req, res, next) => {

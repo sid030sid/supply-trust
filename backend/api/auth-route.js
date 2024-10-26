@@ -5,16 +5,16 @@ const jwt = require('jsonwebtoken');
 const fs = require("fs")
 
 // load in helper functions
-const {generateNonce, convertBase58ToJWK, bs58toPem} = require("../utils/helperFunctions");
+const {generateNonce, pemToJWK} = require("../utils/helperFunctions");
 
 require("dotenv").config();
 
 //global variables
 const serverURL = process.env.BASE_URL+"/api-issuer";
 const authServerURL = process.env.BASE_URL+"/api-auth";
-const privateKey = bs58toPem(process.env.ISSUER_PRIVATE_KEY, "PRIVATE").toString('utf-8');
-const publicKey = bs58toPem(process.env.ISSUER_PUBLIC_KEY, "PUBLIC").toString('utf-8');
-const publicKeyAsJwk = convertBase58ToJWK(process.env.ISSUER_PUBLIC_KEY);
+const privateKey = fs.readFileSync("./certs/private.pem", "utf8");
+const publicKey = fs.readFileSync("./certs/public.pem", "utf8");
+const publicKeyAsJwk = pemToJWK(publicKey, "public")
 
 // In-memory storage
 const accessTokens = new Map(); //TODO: optimize by using redis instead of in-memory storage
