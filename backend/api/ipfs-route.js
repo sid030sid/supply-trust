@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const crypto = require('crypto');
-
 require("dotenv").config();
 
 const {PinataSDK: PinataIpfsApi} = require("pinata-web3");
@@ -14,7 +13,7 @@ const ipfsApi = new PinataIpfsApi({
 const fileApi = new PinataFileApi({
     pinataJwt: process.env.PINATA_API_JWT,
     pinataGateway: process.env.PINATA_API_GATEWAY,
-  });
+});
 
 router.route('/upload').post(async (req, res)=>{
     try {

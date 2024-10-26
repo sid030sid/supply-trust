@@ -1,4 +1,7 @@
-export function generateAccessToken(sub, credential_identifier){
+const crypto = require("crypto")
+const bs58 = require("bs58");
+
+const generateAccessToken = (sub, credential_identifier) =>{
     const payload = {
       iss: `${serverURL}`,
       sub: sub,
@@ -14,11 +17,11 @@ export function generateAccessToken(sub, credential_identifier){
     return token;
 }
 
-export function generateNonce(length = 12){
+const generateNonce = (length = 12) => {
   return crypto.randomBytes(length).toString("hex");
 }
 
-export function convertBase58ToJWK(base58Key){
+const convertBase58ToJWK = (base58Key) =>{
   // Decode the base58 public key into bytes
   const keyBytes = bs58.decode(base58Key);
 
@@ -34,3 +37,9 @@ export function convertBase58ToJWK(base58Key){
 
   return jwk;
 }
+
+module.exports = {
+    generateAccessToken,
+    generateNonce,
+    convertBase58ToJWK,
+};
