@@ -66,12 +66,12 @@ router.route("/verifyAccessToken").post((req, res) => {
       }
   
       if (decoded.exp < Math.floor(Date.now() / 1000)) {
-        return res.status(401).send("Token has expired");
+        return res.status(402).send("Token has expired");
       }
   
       const storedToken = accessTokens.get(decoded.sub);
       if (storedToken !== token) {
-        return res.status(401).send("Invalid token");
+        return res.status(403).send("Invalid token");
       }
   
       res.status(200).send("Token is valid");
