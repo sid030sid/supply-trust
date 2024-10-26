@@ -30,6 +30,10 @@ const generateAccessToken = (sub, credential_identifier) => {
   
     return token;
 }
+
+const generateNonce = (length = 12) => {
+  return crypto.randomBytes(length).toString("hex");
+}
   
 const buildIdToken = (aud) => {
     const payload = {
