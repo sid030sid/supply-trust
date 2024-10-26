@@ -101,7 +101,7 @@ router.route("/credential-offer/:id").get(async (req, res) => {
 
   const response = {
     credential_issuer: `${serverURL}`,
-    credentials: credentialData.type,
+    credentials: credentialData?.type,
     grants: {
       "urn:ietf:params:oauth:grant-type:pre-authorized_code": {
         "pre-authorized_code": pre_auth_code ?? crypto.randomUUID(), //TODO: understand why this step is done for pre-auth code flow???
