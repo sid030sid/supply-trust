@@ -1,13 +1,11 @@
-//this endpoint is used to authenticate the user by verifying the presented verifiable credentials
 const router = require('express').Router();
 const crypto = require("crypto")
 const jwt = require('jsonwebtoken');
 const fs = require("fs")
+require("dotenv").config();
 
 // load in helper functions
 const {generateNonce, pemToJWK} = require("../utils/helperFunctions");
-
-require("dotenv").config();
 
 //global variables
 const serverURL = process.env.BASE_URL+"/api-issuer";
@@ -118,7 +116,7 @@ router.route("/token").post(async (req, res) => {
   const credential_identifier = pre_authorized_code;
 
   // check if user pin is valid
-  //TODO: implement this: verify the user_pin with the issuer generated pin
+  //TODO: verify the user_pin with the issuer generated pin
   if (user_pin !== "1234") {
     console.log("Invalid pin: ", user_pin);
     return res.status(400).send("Invalid pin");

@@ -12,6 +12,9 @@ const serverURL = process.env.BASE_URL+"/api-issuer";
 const authServerURL = process.env.BASE_URL+"/api-auth";
 const privateKey = fs.readFileSync("./certs/private.pem", "utf8");
 
+// in-memory storage
+const offerMap = new Map(); //TODO: optimize by using redis instead of in-memory storage
+
 // Middleware to authenticate access tokens
 const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -39,10 +42,7 @@ const authenticateToken = async (req, res, next) => {
 
 
 /* +++++++++++++++++++ Issuer Endpoints ++++++++++++++++++++++++ */
-
-const offerMap = new Map(); //TODO: optimize by using redis instead of in-memory storage
-
-// offer credential that proves ownership of cid
+// offer credential that proves ownership of cid or grants access to private ipfs file
 router.post("/offer", async (req, res) => {
     // get cid to which ipfs credential is issued
     const cid = req.body.cid
@@ -73,6 +73,7 @@ router.post("/offer", async (req, res) => {
     res.send(credentialOffer);
 });
 
+// get credential offer and its pre-authorized code
 router.route("/credential-offer/:id").get(async (req, res) => {
   const entry = offerMap.get(req.params.id);
   let pre_auth_code;
@@ -103,6 +104,7 @@ router.route("/credential-offer/:id").get(async (req, res) => {
   res.status(200).send(response);
 });
 
+// issue credential to user after successful authentication
 router.route("/credential").post(authenticateToken, async (req, res) => {
   
   // get pre-authorization code from authorization access token
