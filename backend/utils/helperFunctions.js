@@ -1,5 +1,4 @@
 const crypto = require("crypto")
-const bs58 = require("bs58");
 
 const generateAccessToken = (sub, credential_identifier) =>{
     const payload = {
@@ -21,21 +20,24 @@ const generateNonce = (length = 12) => {
   return crypto.randomBytes(length).toString("hex");
 }
 
-const convertBase58ToJWK = (base58Key) =>{
-  // Decode the base58 public key into bytes
-  const keyBytes = bs58.decode(base58Key);
+const convertBase58ToJWK = async (base58Key) =>{
+    // import library for base58 encoding
+    const bs58 = await import("bs58");
 
-  // Convert the bytes to base64url (required by JWK)
-  const base64url = Buffer.from(keyBytes).toString("base64url");
+    // Decode the base58 public key into bytes
+    const keyBytes = bs58.default.decode(base58Key);
 
-  // Create the JWK object
-  const jwk = {
-    kty: "OKP",              // Key Type for Ed25519
-    crv: "Ed25519",          // Curve for Ed25519
-    x: base64url             // Base64url encoded public key bytes
-  };
+    // Convert the bytes to base64url (required by JWK)
+    const base64url = Buffer.from(keyBytes).toString("base64url");
 
-  return jwk;
+    // Create the JWK object
+    const jwk = {
+        kty: "OKP",              // Key Type for Ed25519
+        crv: "Ed25519",          // Curve for Ed25519
+        x: base64url             // Base64url encoded public key bytes
+    };
+
+    return jwk;
 }
 
 module.exports = {
