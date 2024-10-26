@@ -60,7 +60,7 @@ router.route("/verifyAccessToken").post((req, res) => {
       return res.status(400).send("Token is required");
     }
   
-    jwt.verify(token, process.env.ISSUER_PUBLIC_KEY, (err, decoded) => {
+    jwt.verify(token, process.env.ISSUER_PRIVATE_KEY, (err, decoded) => {
       if (err) {
         return res.status(401).send("Invalid token");
       }
@@ -116,85 +116,6 @@ router.route("/.well-known/openid-configuration").get((req, res) => {
     res.status(200).send(config);
 });
 
-router.route("/authorize").get((req, res) => {
-    const {
-      response_type,
-      scope,
-      state,
-      client_id,
-      authorization_details,
-      redirect_uri,
-      nonce,
-      code_challenge,
-      code_challenge_method,
-      client_metadata,
-      issuer_state,
-    } = req.query;
-  
-    if (!client_id) {
-      return res.status(400).send("Client id is missing");
-    }
-  
-    if (!redirect_uri) {
-      return res.status(400).send("Missing redirect URI");
-    }
-  
-    if (response_type !== "code") {
-      return res.status(400).send("Unsupported response type");
-    }
-  
-    if (code_challenge_method !== "S256") {
-      return res.status(400).send("Invalid code challenge method");
-    }
-  
-    authorizationCodes.set(client_id, {
-      codeChallenge: code_challenge,
-      authCode: null,
-      issuer_state: issuer_state,
-    });
-  
-    const responseType = "id_token";
-    const responseMode = "direct_post";
-    const redirectURI = `${authServerURL}/direct_post`;
-  
-    const payload = {
-      iss: serverURL,
-      aud: client_id,
-      nonce: nonce,
-      state: state,
-      client_id: client_id,
-      response_uri: client_id,
-      response_mode: responseMode,
-      response_type: responseType,
-      scope: "openid",
-    };
-  
-    const requestJar = jwt.sign(payload, process.env.ISSUER_PRIVATE_KEY);
-    const redirectUrl = `${redirect_uri}?state=${state}&client_id=${client_id}&redirect_uri=${redirectURI}&response_type=${responseType}&response_mode=${responseMode}&scope=openid&nonce=${nonce}&request=${requestJar}`;
-    return res.redirect(302, redirectUrl);
-});
-  
-router.route("/direct_post",).post(async (req, res) => {
-    let state = req.body["state"];
-    let id_jwt = req.body["id_token"];
-    if (id_jwt) {
-      //TODO: verify id_token if necessary
-      const iss = decode(id_jwt).iss;
-      const authorizationCode = generateNonce(32);
-      if (authorizationCodes.has(iss)) {
-        const currentValue = authorizationCodes.get(iss);
-        authorizationCodes.set(iss, {
-          ...currentValue,
-          authCode: authorizationCode,
-        });
-      }
-      const redirectUrl = `http://localhost:8080?code=${authorizationCode}&state=${state}`;
-      return res.redirect(302, redirectUrl);
-    } else {
-      return res.sendStatus(500);
-    }
-});
-  
 router.route("/token").post(async (req, res) => {
     const { client_id, code, code_verifier, grant_type, user_pin } = req.body;
     const pre_authorized_code = req.body["pre-authorized_code"];
