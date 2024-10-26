@@ -117,41 +117,43 @@ router.route("/.well-known/openid-configuration").get((req, res) => {
 });
 
 router.route("/token").post(async (req, res) => {
-    const { client_id, code, code_verifier, grant_type, user_pin } = req.body;
-    const pre_authorized_code = req.body["pre-authorized_code"];
-    let credential_identifier;
-    console.log("grant_type: ", grant_type);
-    console.log("client_id: ", client_id);	
-    console.log("user_pin", user_pin);
 
-    console.log("body of token endpoint:", JSON.stringify(req.body));
-    if (grant_type === "urn:ietf:params:oauth:grant-type:pre-authorized_code") {
-      console.log("pre-auth code flow: ", pre_authorized_code);
-  
-      //TODO: implement this: verify the user_pin with the issuer generated pin
-      if (user_pin !== "1234") {
-        console.log("Invalid pin: ", user_pin);
-        return res.status(400).send("Invalid pin");
-      }
-      credential_identifier = pre_authorized_code;
-    } else {
-        return res.status(400).send("Only pre-authorized_code grant type is supported!");
-    }
-    const generatedAccessToken = generateAccessToken(
-      client_id,
-      credential_identifier
-    );
-    accessTokens.set(client_id, generatedAccessToken);
+  // get data from wallet put inside req.body
+  const pre_authorized_code = req.body["pre-authorized_code"];
+  const user_pin = req.body["user_pin"];
+  const grant_type = req.body["grant_type"];
 
-    console.log("created access token:", generatedAccessToken)
-  
-    res.json({
-      access_token: generatedAccessToken,
-      token_type: "bearer",
-      expires_in: 86400,
-      c_nonce: generateNonce(16),
-      c_nonce_expires_in: 86400,
-    });
+  // check if pre-authorized_code grant type is used
+  if (grant_type !== "urn:ietf:params:oauth:grant-type:pre-authorized_code") {
+    console.log("Invalid grant_type: ", grant_type);
+    return res.status(400).send("Only pre-authorized_code grant type is supported!");
+  }
+
+  // set credential identifier to pre-auth code
+  const credential_identifier = pre_authorized_code;
+
+  // check if user pin is valid
+  //TODO: implement this: verify the user_pin with the issuer generated pin
+  if (user_pin !== "1234") {
+    console.log("Invalid pin: ", user_pin);
+    return res.status(400).send("Invalid pin");
+  }
+    
+  // create client id and access token
+  const client_id = crypto.randomUUID();
+  const generatedAccessToken = generateAccessToken(
+    client_id,
+    credential_identifier
+  );
+  accessTokens.set(client_id, generatedAccessToken);
+
+  res.json({
+    access_token: generatedAccessToken,
+    token_type: "bearer",
+    expires_in: 86400,
+    c_nonce: generateNonce(16),
+    c_nonce_expires_in: 86400,
+  });
 });
 
 module.exports = router;
