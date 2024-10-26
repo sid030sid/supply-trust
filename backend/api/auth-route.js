@@ -140,10 +140,7 @@ router.route("/token").post(async (req, res) => {
 // endpoint for wallets to get jwks used by auth server to sign tokens
 router.route("/jwks").get((req,res) => {
   res.json({
-    keys: [
-      { ...publicKeyAsJwk, kid: `${process.env.ISSUER_DID}#sig-key`, use: "sig" },
-      { ...publicKeyAsJwk, kid: `${process.env.ISSUER_DID}#authentication-key`, use: "keyAgreement" }
-    ],
+    keys: [publicKeyAsJwk]
   });
 })
 
