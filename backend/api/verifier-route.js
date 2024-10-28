@@ -25,10 +25,9 @@ const publicKeyAsJwk = pemToJWK(publicKey, "public")
 // get vp request uri for private ipfs access credential or private ipfs ownership credential
 router.route("/generate-vp-request").get(async (req, res) => {
     try {
-    console.log("Generating VP request");
     // Get parameters from the request URL
     const stateParam = req.query.state || uuidv4();
-    const request_uri = `${serverURL}/get-vp-request/${stateParam}?pd=${ownership_vc_presentation_definition}`;
+    const request_uri = `${serverURL}/get-vp-request/${stateParam}?pd=${JSON.stringify(ownership_vc_presentation_definition)}`;
 
     // Build the VP request URI
     const vpRequest = `openid4vp://?client_id=${encodeURIComponent(serverURL)}&request_uri=${encodeURIComponent(request_uri)}`
@@ -45,6 +44,8 @@ router.route('/get-vp-request/:state').get( async (req, res) => {
     try {
       const state = req.params.state || uuidv4();
       const pd = req.query.pd;
+
+      console.log("PD in get endpoint:", pd);
   
       if (!pd) {
         return res.status(400).send("Presentation definition is required");
