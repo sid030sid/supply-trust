@@ -29,6 +29,10 @@ app.use("/api-issuer", apiIssuerRouter);
 const apiAuthRouter = require("./api/auth-route.js");
 app.use("/api-auth", apiAuthRouter);
 
+// use API for verifier service
+const apiVerifierRouter = require("./api/verifier-route.js");
+app.use("/api-verifier", apiVerifierRouter);
+
 //if production give app static assets (e.g. favicon and all routes)
 if(process.env.NODE_ENV === "production"){
   // allow app to use static files of build folder
