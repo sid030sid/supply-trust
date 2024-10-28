@@ -31,6 +31,11 @@ const ownership_vc_presentation_definition = {
   input_descriptors: [
     {
       id: "ef91319b-81a5-4f71-a602-de3eacccb54b",
+      format: {
+        jwt_vc: {
+          alg: ["ES256", "ES384"],
+        },
+      },
       constraints: {
         fields: [
           {
