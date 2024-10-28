@@ -12,7 +12,7 @@ const access_vc_presentation_definition = {
         constraints: {
           fields: [
             {
-              path: ["$.credentialSubject.cid"],
+              path: ["$.credentialSubject.cid", "$.vc.credentialSubject.cid"],
             },
           ],
         },
@@ -34,7 +34,7 @@ const ownership_vc_presentation_definition = {
       constraints: {
         fields: [
           {
-            path: ["$.credentialSubject.cid"],
+            path: ["$.credentialSubject.cid", "$.vc.credentialSubject.cid"],
           },
         ],
       },
