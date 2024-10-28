@@ -34,7 +34,7 @@ router.route("/generate-vp-request").get(async (req, res) => {
     const vpRequest = `openid4vp://?client_id=${encodeURIComponent(serverURL)}&request_uri=${encodeURIComponent(request_uri)}`
 
     // Return the VP request as JSON
-    res.status(200).json({ vpRequest });
+    res.status(200).send(vpRequest);
     } catch (error) {
         console.error("Error in /generate-vp-request endpoint:", error);
         res.status(500).send("Internal server error");
