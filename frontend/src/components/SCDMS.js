@@ -51,7 +51,7 @@ export default function SCDMS(props) {
         const cid = res.data
 
         //alert for better UX
-        alert("Your supply chain event metadata is stored on IPFS with CID: "+cid+"\nPlease wait for suppply chain event to be documented with did:cheqd.")
+        alert("Your supply chain event metadata is stored as CID: "+cid+"\nPlease wait for the supply chain event to be fully documented with did:cheqd.")
 
         //if checked true, then ipfs file with event metadata is private and service endpoint for requesting access to ipfs file must be included in did doc
         const serviceEndpoints = []
