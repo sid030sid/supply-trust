@@ -9,6 +9,7 @@ import DrawerMenu from './components/subcomponents/DrawerMenu';
 import Navbar from './components/subcomponents/Navbar';
 import SCDMS from "./components/SCDMS"
 import EventMetadata from './components/EventMetadata';
+import AccessManager from './components/AccessManager';
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
         />
         <Routes>
           <Route index element={<Home/>} />
+          <Route path="/access-manager" element={<AccessManager/>}/>
           <Route path="/trace-and-track" element={<InputForTracing/>}/>
           <Route path="/trace-and-track/:cid" element={<EventMetadata/>}/>
           <Route path="/scdms" element={<SCDMS/>}/>

@@ -24,6 +24,9 @@ function DrawerMenu(props) {
                 <ListItemButton onClick={()=>{props.closeDrawerMenu(); navigate("/scdms")}}>
                     Document events
                 </ListItemButton>
+                <ListItemButton onClick={()=>{props.closeDrawerMenu(); navigate("/access-manager")}}>
+                    Manage Private IPFS Access
+                </ListItemButton>
             </List>
         </Drawer>
     );
