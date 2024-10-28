@@ -60,9 +60,50 @@ const pemToJWK = (pem, keyType) => {
     return jwk;
 }
 
+const buildVpRequestJwt = (
+    state,
+    nonce,
+    client_id,
+    response_uri,
+    presentation_definition,
+    jwk,
+    serverURL,
+    privateKey,
+) =>{
+    let jwtPayload = {
+      client_id_scheme: "redirect_uri",
+      response_uri: response_uri,
+      iss: serverURL,
+      presentation_definition: presentation_definition,
+      response_type: "vp_token",
+      state: state,
+      exp: Math.floor(Date.now() / 1000) + 60,
+      nonce: nonce,
+      iat: Math.floor(Date.now() / 1000),
+      client_id: client_id,
+      response_mode: "direct_post",
+      // nbf: Math.floor(Date.now() / 1000),
+      // redirect_uri: redirect_uri,
+      // scope: "openid",
+    };
+  
+    const header = {
+      alg: "ES256",
+      kid: `supply-trust-did#key-1`,
+    };
+  
+    const token = jwt.sign(jwtPayload, privateKey, {
+      algorithm: "ES256",
+      noTimestamp: true,
+      header,
+    });
+    return token;
+}
+
 module.exports = {
     generateNonce,
     convertBase58ToJWK,
     bs58toPem,
-    pemToJWK
+    pemToJWK,
+    buildVpRequestJwt
 };

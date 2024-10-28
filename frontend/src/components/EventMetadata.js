@@ -41,13 +41,13 @@ const EventMetadata = () => {
             if(res.data?.data?.event !== null){
                 setEventMetadata(res.data.data)
             }else{
-                setEventMetadata("private") //if private, verify vc_jwt of user and then show data to user
+                const requestOid4vpUrl = await axios.get(`/api-verifier/generate-vp-request`);
+                console.log(requestOid4vpUrl.data)
+                setOid4vpUrl(requestOid4vpUrl.data) //if private, verify vc_jwt of user and then show data to user
 
                 //get oid4vp url from verifier service
                     //TODO: call endpoint and then call setOid4vpUrl OR navigate to "trace-and-track/cid/verify" page!!! which redirects after successfull oid4vp back to this page with "trace-and-track/cid"??? --> no to complicated
             }
-
-            
         }catch(e){
             console.log(e)
         }
@@ -62,12 +62,6 @@ const EventMetadata = () => {
     return(
         <div>
             {eventMetadata?
-                eventMetadata === "private" & oid4vpUrl?
-                    <div>
-                        <h1>Supply chain event metadata stored in IPFS file {cid} is private. Please present VC so that SupplyTrust can verify your access right for private IPFS file: {cid}</h1>
-                        <QRCode value={oid4vpUrl}/>
-                    </div>
-                :
                 <div>
                     <h2>Supply chain event: </h2>
                     <pre>{eventMetadata?.event}</pre>
@@ -75,6 +69,12 @@ const EventMetadata = () => {
                     <pre>{JSON.stringify(eventMetadata?.metadata)}</pre>
                 </div>
             :
+            oid4vpUrl?
+                <div>
+                    <h1>Supply chain event metadata stored in IPFS file {cid} is private. Please present Private IPFS Ownership Credential so that SupplyTrust can verify your access right for private IPFS file: {cid}</h1>
+                    <QRCode value={oid4vpUrl}/>
+                </div>
+                :
                 ""
             }
         </div>
