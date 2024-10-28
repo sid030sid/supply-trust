@@ -1,3 +1,4 @@
+add did of supply chain item to vc credential subject
 implement following work flow: user traces item by inputting did, then it clicks on metadata a pop up window opens hich either displays the metadata (if the file is public) or it displays a qr code that must be scanned in order to verify by presenting VP with authorization claim --> verification service (built in download/:cid endpoint that is meant for private files)
 add loading symbolso that user knows that one needs to wait for supply chain event documentation
 add auth routes: authorize endpoint verifies vc_jwt regarding if the controller of the did is also the issuer of the vc with access rights to specific private ipfs file or the issuer is the supplytrust server
