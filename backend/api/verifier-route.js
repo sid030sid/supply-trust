@@ -13,7 +13,7 @@ const { digest } = require('@sd-jwt/crypto-nodejs');
 const {generateNonce, pemToJWK, buildVpRequestJwt} = require("../utils/helperFunctions");
 
 // load in presentation definition of credentials
-const {access_vc_presentation_definition, ownership_vc_presentation_definition} = require("../utils/presentationDefinitions");
+const {access_vc_presentation_definition, ownership_vc_presentation_definition, vc_presentation_definition} = require("../utils/presentationDefinitions");
 
 // global variables
 const serverURL = process.env.BASE_URL+"/api-verifier";
@@ -27,7 +27,7 @@ router.route("/generate-vp-request").get(async (req, res) => {
     try {
     // Get parameters from the request URL
     const stateParam = req.query.state || uuidv4();
-    const request_uri = `${serverURL}/get-vp-request/${stateParam}?pd=${JSON.stringify(ownership_vc_presentation_definition)}`;
+    const request_uri = `${serverURL}/get-vp-request/${stateParam}?pd=${JSON.stringify(vc_presentation_definition)}`;
 
     // Build the VP request URI
     const vpRequest = `openid4vp://?client_id=${encodeURIComponent(serverURL)}&request_uri=${encodeURIComponent(request_uri)}`
