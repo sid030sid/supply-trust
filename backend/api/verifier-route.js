@@ -41,7 +41,7 @@ router.route("/generate-vp-request").get(async (req, res) => {
     }
 });
 
-router.route('/get-vp-request/:state?').get( async (req, res) => {
+router.route('/get-vp-request/:state').get( async (req, res) => {
     try {
       const state = req.params.state || uuidv4();
       const pd = req.query.pd;
