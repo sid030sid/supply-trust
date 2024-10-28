@@ -50,6 +50,9 @@ export default function SCDMS(props) {
         //get ipfs path
         const cid = res.data
 
+        //alert for better UX
+        alert("Your supply chain event metadata is stored on IPFS with CID: "+cid+"\nPlease wait for suppply chain event to be documented with did:cheqd.")
+
         //if checked true, then ipfs file with event metadata is private and service endpoint for requesting access to ipfs file must be included in did doc
         const serviceEndpoints = []
         if(checked && accessRequestUrl !== ""){
@@ -88,7 +91,7 @@ export default function SCDMS(props) {
             const didCreationRes = await axios.post("/api-credential-service/create", {services:serviceEndpoints})
 
             if(didCreationRes){
-                alert("Your newly created DID has ID: "+didCreationRes.data.did)
+                alert("Your newly produced supply chain item is identified as "+didCreationRes.data.did+". Verify by performing tracing and tracking.")
             }
         }else{
             if(event === "shipping"){
@@ -138,7 +141,7 @@ export default function SCDMS(props) {
                 )
 
                 if(didCreationRes){
-                    alert("Successful documentation of shipping event. Verify by tracing and tracking DID: "+ did)
+                    alert("Successful documentation of shipping event in the newest DID Document version of "+ did + ". Verify by performing tracing and tracking.")
                 }
             }else{
                 if(event === "receiving"){
@@ -177,7 +180,7 @@ export default function SCDMS(props) {
                     )
 
                     if(didCreationRes){
-                        alert("Successful documentation of receiving event. Verify by tracing and tracking DID: "+ did)
+                        alert("Successful documentation of receiving event in the newest DID Document version of "+ did + ". Verify by performing tracing and tracking.")
                     }
                 }else{ //case of manufacturing
 
@@ -207,7 +210,7 @@ export default function SCDMS(props) {
                     const didCreationRes = await axios.post("/api-credential-service/create", {services: serviceEndpoints})
 
                     if(didCreationRes){
-                        setCredentialOfferUrl(didCreationRes.data.did)
+                        alert("Your newly manufactured supply chain item is identified as "+didCreationRes.data.did+". Verify by performing tracing and tracking.")
                     }
                 }
             }
