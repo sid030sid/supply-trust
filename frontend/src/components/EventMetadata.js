@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useParams, useNavigate} from 'react-router-dom';
+import { useParams, useNavigate, useLocation} from 'react-router-dom';
 import axios from 'axios';
 import QRCode from "react-qr-code";
 import { CID } from 'multiformats/cid'
@@ -14,10 +14,19 @@ const isValidCid = (cidString) => {
     }
 }
 
+const useQuery = () => {
+    const { search } = useLocation();
+  
+    return React.useMemo(() => new URLSearchParams(search), [search]);
+}
+
 const EventMetadata = () => {
 
     // get cid of ipfs file from params
     const { cid } = useParams();
+
+    // get query from url
+    const query = useQuery();
 
     // state variables
     const [eventMetadata, setEventMetadata] = React.useState(null)
@@ -34,19 +43,23 @@ const EventMetadata = () => {
                 return
             }
 
-            //download file from private or public ipfs
-            const res = await axios.get(`/api-ipfs/download/${cid}`);
+            const privateAccess = query.get("private") === "true" ? true : false
 
-            //if public, show event meta data to user
-            if(res.data?.data?.event !== null){
-                setEventMetadata(res.data.data)
-            }else{
-                const requestOid4vpUrl = await axios.get(`/api-verifier/generate-vp-request`);
+            // if access is private, get oid4vp url from verifier service and display qr code for OID4VP
+            if(privateAccess){
+                const requestOid4vpUrl = await axios.get("/api-verifier/generate-vp-request");
                 console.log(requestOid4vpUrl.data)
                 setOid4vpUrl(requestOid4vpUrl.data) //if private, verify vc_jwt of user and then show data to user
+            }else{
+                //download file from public ipfs
+                const res = await axios.get(`/api-ipfs/download/${cid}`);
 
-                //get oid4vp url from verifier service
-                    //TODO: call endpoint and then call setOid4vpUrl OR navigate to "trace-and-track/cid/verify" page!!! which redirects after successfull oid4vp back to this page with "trace-and-track/cid"??? --> no to complicated
+                //if file found show content to user
+                if(res.data?.data?.event !== null){
+                    setEventMetadata(res.data.data)
+                }else{
+                    alert("Public IPFS file not found")
+                }
             }
         }catch(e){
             console.log(e)

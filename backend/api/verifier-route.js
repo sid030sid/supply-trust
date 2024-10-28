@@ -25,7 +25,7 @@ const publicKeyAsJwk = pemToJWK(publicKey, "public")
 // get vp request uri for private ipfs access credential or private ipfs ownership credential
 router.route("/generate-vp-request").get(async (req, res) => {
     try {
-
+    console.log("Generating VP request");
     // Get parameters from the request URL
     const stateParam = req.query.state || uuidv4();
     const request_uri = `${serverURL}/get-vp-request/${stateParam}?pd=${ownership_vc_presentation_definition}`;
