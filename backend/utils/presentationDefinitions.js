@@ -21,7 +21,7 @@ const access_vc_presentation_definition = {
 };
 
 const ownership_vc_presentation_definition = {
-  id: "046acbac-ea8d-4f95-8b57-f58dd178132b",
+  id: "PrivateIpfsOwnershipCredential", //"046acbac-ea8d-4f95-8b57-f58dd178132b",
   name: "PrivateIpfsOwnershipCredential",
   format: {
     jwt_vc: {
