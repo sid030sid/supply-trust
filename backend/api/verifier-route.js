@@ -76,6 +76,9 @@ router.route('/get-vp-request/:state').get( async (req, res) => {
 router.route('/direct-post/:state').post(async (req, res) => {
     try {
         console.log("body in direct post endpoint", req.body)
+        //TODO: decode vp_token in jwt --> find cid and then issue bearer token that grants access to that private ipfs file
+
+        /*
         // Parse the request body as a URL-encoded string
         const urlEncodedString = await req.text();
         const urlParams = new URLSearchParams(urlEncodedString);
@@ -113,6 +116,7 @@ router.route('/direct-post/:state').post(async (req, res) => {
         }else{
             res.status(500).json({error: "Claims not found"});
         }
+        */
         } catch (error) {
         console.error("Error processing request:", error);
         res.status(500).json({ error: "Internal Server Error" });

@@ -5,11 +5,13 @@ require("dotenv").config();
 const {PinataSDK: PinataIpfsApi} = require("pinata-web3");
 const {PinataSDK: PinataFileApi} = require("pinata");
 
+// instantiate the ipfs api aka public ipfs storage
 const ipfsApi = new PinataIpfsApi({
   pinataJwt: process.env.PINATA_API_JWT,
   pinataGateway: process.env.PINATA_API_GATEWAY,
 });
 
+// instantiate the file api aka private ipfs storage
 const fileApi = new PinataFileApi({
     pinataJwt: process.env.PINATA_API_JWT,
     pinataGateway: process.env.PINATA_API_GATEWAY,
@@ -108,6 +110,7 @@ router.route('/download-private-ipfs/:cid').get(async (req, res) => {
 */
 
 
+//TODO: add middleware that checks if user is authorized to download from private ipfs
 router.route('/download/:cid').get(async (req, res) => {
     try {
         const cid = req.params.cid;
@@ -117,6 +120,7 @@ router.route('/download/:cid').get(async (req, res) => {
         }
         
         let data;
+        
         // Attempt to download file from public IPFS
         data = await ipfsApi.gateways.get(cid);
 
