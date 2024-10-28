@@ -73,7 +73,7 @@ router.route('/get-vp-request/:state').get( async (req, res) => {
     }
 });
 
-router.route('/direct_post/:state').post(async (req, res) => {
+router.route('/direct-post/:state').post(async (req, res) => {
     try {
         console.log("body in direct post endpoint", req.body)
         // Parse the request body as a URL-encoded string
