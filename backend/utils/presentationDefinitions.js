@@ -1,5 +1,5 @@
 const ownership_vc_presentation_definition = {
-  id: "PrivateIpfsOwnershipCredential#",
+  id: "PrivateIpfsOwnershipCredential",
   name: "PrivateIpfsOwnershipCredential",
   format: {
     jwt_vc: {
@@ -8,10 +8,10 @@ const ownership_vc_presentation_definition = {
   },
   input_descriptors: [
     {
-      id: "PrivateIpfsOwnershipCredentialConstraints#",
+      id: "PrivateIpfsOwnershipCredentialConstraints",
       format: {
         jwt_vc: {
-          alg: ["ES256", "ES384"],
+          alg: ["ES256", "ES384"]
         },
       },
       constraints: {
@@ -23,7 +23,7 @@ const ownership_vc_presentation_definition = {
             path: ["$.credentialSubject.didDocumentVersion", "$.vc.credentialSubject.didDocumentVersion"],
           },
           {
-            path: ["$.credentialSubject.cid", "$.vc.credentialSubject.cid"],
+            path: ["$.credentialSubject.cid", "$.vc.credentialSubject.cid"]
           }
         ],
       },
