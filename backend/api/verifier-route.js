@@ -8,6 +8,7 @@ const { URLSearchParams } = require('url');
 const axios = require('axios');
 const { decodeSdJwt, getClaims } = require('@sd-jwt/decode');
 const { digest } = require('@sd-jwt/crypto-nodejs');
+const WebSocket = require('ws');
 
 // load in helper functions
 const {generateNonce, pemToJWK, buildVpRequestJwt} = require("../utils/helperFunctions");
