@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation} from 'react-router-dom';
 import axios from 'axios';
 import QRCode from "react-qr-code";
 import { CID } from 'multiformats/cid'
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 // helper function
 const isValidCid = (cidString) => {
