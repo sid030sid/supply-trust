@@ -48,8 +48,23 @@ const EventMetadata = () => {
             // if access is private, get oid4vp url from verifier service and display qr code for OID4VP
             if(privateAccess){
                 const requestOid4vpUrl = await axios.get("/api-verifier/generate-vp-request");
-                console.log(requestOid4vpUrl.data)
+                const state = requestOid4vpUrl.data.match(/\/([a-f0-9-]{36})\?/)
+
+                // update url for user to scan and initiage OID4VP
                 setOid4vpUrl(requestOid4vpUrl.data) //if private, verify vc_jwt of user and then show data to user
+                
+                //websocket connection to get token from verifier service
+                const ws = new WebSocket(`wss://supply-trust-8ee27263c820.herokuapp.com/ws?state=${state}`);
+                ws.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    if (data.token) {
+                        console.log("Received token:", data.token);
+                        // Save or use the token in your app as needed
+                    }
+                };
+                ws.onclose = () => {
+                    console.log("WebSocket connection closed");
+                };
             }else{
                 //download file from public ipfs
                 const res = await axios.get(`/api-ipfs/download/${cid}`);

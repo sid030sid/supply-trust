@@ -46,8 +46,6 @@ router.route('/get-vp-request/:state').get( async (req, res) => {
     try {
       const state = req.params.state || uuidv4();
       const pd = req.query.pd;
-
-      console.log("PD in get endpoint:", pd);
   
       if (!pd) {
         return res.status(400).send("Presentation definition is required");
@@ -77,8 +75,46 @@ router.route('/get-vp-request/:state').get( async (req, res) => {
 
 router.route('/direct-post/:state').post(async (req, res) => {
     try {
-        console.log("body in direct post endpoint", req.body)
-        //TODO: decode vp_token in jwt --> find cid and then issue bearer token that grants access to that private ipfs file
+        const decodedVPToken = jwt.decode(req.body.vp_token);
+        const decodedVerifiableCredential = jwt.decode(decodedVPToken.vp.verifiableCredential[0]);
+        const cid = decodedVerifiableCredential.vc.credentialSubject.cid;
+        const did = decodedVerifiableCredential.vc.credentialSubject.did;
+        const didDocumentVersion = decodedVerifiableCredential.vc.credentialSubject.didDocumentVersion;
+        const credentialTypes = decodedVerifiableCredential.vc.type;
+        const issuer = decodedVerifiableCredential.vc.issuer;
+        console.log("decodedVPToken:", decodedVPToken);
+        console.log("decodedVerifiableCredential:", decodedVerifiableCredential);
+        console.log("cid:", cid);
+        console.log("did:", did);
+        console.log("didDocumentVersion:", didDocumentVersion);
+        console.log("credentialTypes:", credentialTypes);
+        console.log("issuer:", issuer);
+
+        //check validity of verifiable presentation
+        if(issuer !== process.env.ISSUER_DID){
+            return res.status(401).send("Invalid issuer");
+        }
+        if(!credentialTypes.includes("PrivateIpfsOwnershipCredential")){
+            return res.status(402).send("Invalid credential type");
+        }
+
+        //since vc is valid, issue Bearer Token for accessing private ipfs
+        const payload = {
+            did: did,
+            cid: cid,
+            didDocumentVersion: didDocumentVersion,
+            role: credentialTypes.includes("PrivateIpfsOwnershipCredential") ? "ownership" : "access",
+            exp: Math.floor(Date.now() / 1000) + 60 * 60, //1h validity
+        };
+        const token = jwt.sign(payload, privateKey, { algorithm: "ES256" });
+
+        // send token to client via websocket
+        const wsClient = req.app.get("ws").clients.get(state);
+        if (wsClient && wsClient.readyState === WebSocket.OPEN) { // Check for WebSocket client and send token if connected
+            wsClient.send(JSON.stringify({ token }));
+        }
+
+        res.status(200).send("Token sent via WebSocket");
 
         /*
         // Parse the request body as a URL-encoded string
@@ -119,7 +155,7 @@ router.route('/direct-post/:state').post(async (req, res) => {
             res.status(500).json({error: "Claims not found"});
         }
         */
-        } catch (error) {
+    } catch (error) {
         console.error("Error processing request:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }

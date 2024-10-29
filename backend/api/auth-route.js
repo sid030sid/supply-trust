@@ -29,7 +29,7 @@ const generateAccessToken = (sub, credential_identifier) =>{
     credential_identifier: credential_identifier,
   };
   // Sign the JWT
-  const token = jwt.sign(payload, privateKey, { algorithm: "ES256" }); // TODO: should be created using ES256
+  const token = jwt.sign(payload, privateKey, { algorithm: "ES256" });
 
   return token;
 }
@@ -41,7 +41,6 @@ router.route("/verifyAccessToken").post((req, res) => {
       return res.status(400).send("Token is required");
     }
     
-
     // TODO: should be verified using ES256
     jwt.verify(token, publicKey, { algorithm: "ES256" }, (err, decoded) => { //TODO: should by public key
       if (err) {
