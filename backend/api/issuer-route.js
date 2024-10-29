@@ -138,9 +138,9 @@ router.route("/credential").post(authenticateToken, async (req, res) => {
     iat: Math.floor(Date.now() / 1000),
     vc: {
       credentialSubject: credentialSubject,
-      expirationDate: new Date(
+      /*expirationDate: new Date(
         (Math.floor(Date.now() / 1000) + 60 * 60 * 48) * 1000 //48h validity
-      ).toISOString(),
+      ).toISOString(),*/
       id: decodedHeaderSubjectDID,
       issuanceDate: new Date(
         Math.floor(Date.now() / 1000) * 1000
