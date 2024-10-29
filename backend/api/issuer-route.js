@@ -47,7 +47,7 @@ router.post("/offer", async (req, res) => {
     // get cid to which ipfs credential is issued
     const cid = req.body.cid
     const did = req.body.did
-    const didDocVersion = req.body.didDocVersion
+    const didDocumentVersion = req.body.didDocumentVersion
 
     // get requested credential type and checck its validness
     const credentialType = req.body.credentialType
@@ -62,6 +62,8 @@ router.post("/offer", async (req, res) => {
     // prepare credential subject based on cid and credential type
     const credentialData = {
       credentialSubject: {
+        did: did,
+        didDocumentVersion: didDocumentVersion,
         cid: cid
       },
       type: ["VerifiableCredential", credentialType]

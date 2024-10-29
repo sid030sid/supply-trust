@@ -55,7 +55,7 @@ export default function SCDMS(props) {
 
         
         const serviceEndpoints = []
-        
+
         /*
         //if checked true, then ipfs file with event metadata is private and service endpoint for requesting access to ipfs file must be included in did doc
         if(checked && accessRequestUrl !== ""){
@@ -83,6 +83,7 @@ export default function SCDMS(props) {
         }
 
         // create did or update did depending on supply chain event
+        let workingDid = did
         if(event === "producing"){
 
             // create endpoints for services in did doc
@@ -98,7 +99,8 @@ export default function SCDMS(props) {
             const didCreationRes = await axios.post("/api-credential-service/create", {services:serviceEndpoints})
 
             if(didCreationRes){
-                alert("Your newly produced supply chain item is identified as "+didCreationRes.data.did+". Verify by performing tracing and tracking.")
+                workingDid = didCreationRes.data.did
+                alert("Your newly produced supply chain item is identified as "+workingDid+". Verify by performing tracing and tracking.")
             }
         }else{
             if(event === "shipping"){
@@ -217,7 +219,8 @@ export default function SCDMS(props) {
                     const didCreationRes = await axios.post("/api-credential-service/create", {services: serviceEndpoints})
 
                     if(didCreationRes){
-                        alert("Your newly manufactured supply chain item is identified as "+didCreationRes.data.did+". Verify by performing tracing and tracking.")
+                        workingDid = didCreationRes.data.did
+                        alert("Your newly manufactured supply chain item is identified as "+workingDid+". Verify by performing tracing and tracking.")
                     }
                 }
             }
@@ -225,8 +228,18 @@ export default function SCDMS(props) {
 
         // if supply chain event metadata file in ipfs is private, then SupplyTrust issues VC using pre-authorized code flow folowing OID4VCI
         if(checked){
+
+            // get current did document version
+            const workingDidCurrentResObj = await axios.get("https://resolver.cheqd.net/1.0/identifiers/"+workingDid, {headers:{"Accept" : "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"}})
+            const workingDidDocumentVersion = workingDidCurrentResObj.data.didDocumentMetadata.versionId
+            
             // create credential offer
-            const credentialOfferRes = await axios.post("/api-issuer/offer", {cid: cid, credentialType: "PrivateIpfsOwnershipCredential"})
+            const credentialOfferRes = await axios.post("/api-issuer/offer", {
+                did: workingDid,
+                didDocumentVersion: workingDidDocumentVersion,
+                cid: cid, 
+                credentialType: "PrivateIpfsOwnershipCredential"
+            })
 
             // if credential offer created, then pop-up QR code for user to claim VC offer
             if(credentialOfferRes){
