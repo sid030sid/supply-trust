@@ -48,6 +48,7 @@ const EventMetadata = () => {
             // if access is private, get oid4vp url from verifier service and display qr code for OID4VP
             if(privateAccess){
                 const requestOid4vpUrl = await axios.get("/api-verifier/generate-vp-request");
+                console.log("data send by api-verifier/generate-vp-request", requestOid4vpUrl.data)
                 const state = requestOid4vpUrl.data.match(/\/([a-f0-9-]{36})\?/)
 
                 // update url for user to scan and initiage OID4VP
