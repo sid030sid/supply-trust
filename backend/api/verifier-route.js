@@ -75,6 +75,7 @@ router.route('/get-vp-request/:state').get( async (req, res) => {
 
 router.route('/direct-post/:state').post(async (req, res) => {
     try {
+        const state = req.params.state;
         const decodedVPToken = jwt.decode(req.body.vp_token);
         const decodedVerifiableCredential = jwt.decode(decodedVPToken.vp.verifiableCredential[0]);
         const cid = decodedVerifiableCredential.vc.credentialSubject.cid;
