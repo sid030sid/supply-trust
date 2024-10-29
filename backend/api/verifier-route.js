@@ -82,13 +82,6 @@ router.route('/direct-post/:state').post(async (req, res) => {
         const didDocumentVersion = decodedVerifiableCredential.vc.credentialSubject.didDocumentVersion;
         const credentialTypes = decodedVerifiableCredential.vc.type;
         const issuer = decodedVerifiableCredential.vc.issuer;
-        console.log("decodedVPToken:", decodedVPToken);
-        console.log("decodedVerifiableCredential:", decodedVerifiableCredential);
-        console.log("cid:", cid);
-        console.log("did:", did);
-        console.log("didDocumentVersion:", didDocumentVersion);
-        console.log("credentialTypes:", credentialTypes);
-        console.log("issuer:", issuer);
 
         //check validity of verifiable presentation
         if(issuer !== process.env.ISSUER_DID){

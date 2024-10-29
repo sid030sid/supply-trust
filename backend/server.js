@@ -25,13 +25,13 @@ const clients = new Map();
 
 wss.on("connection", (ws, req) => {
   // This example assumes a URL parameter `cid` or another identifier
-  console.log("WebSocket connection established:", req.url);
   const url = new URL(req.url, `http://${req.headers.host}`);
   const state = url.searchParams.get("state");
   
   if (state) {
     // Map the connection to the user's unique `cid`
     clients.set(state, ws);
+    console.log("WebSocket client connected with state:", state);
 
     ws.on("close", () => {
       clients.delete(state);
