@@ -54,7 +54,7 @@ const EventMetadata = () => {
                 setOid4vpUrl(requestOid4vpUrl.data) //if private, verify vc_jwt of user and then show data to user
                 
                 //websocket connection to get token from verifier service
-                const ws = new WebSocket(`wss://supply-trust-8ee27263c820.herokuapp.com/ws?state=${state}`);
+                const ws = new WebSocket(`wss://${process.env.REACT_APP_BASE_URL}/ws?state=${state}`);
                 ws.onmessage = (event) => {
                     const data = JSON.parse(event.data);
                     if (data.token) {
