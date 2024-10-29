@@ -1,5 +1,5 @@
 const ownership_vc_presentation_definition = {
-  id: "PrivateIpfsOwnershipCredential",
+  id: "PrivateIpfsOwnershipCredential#",
   name: "PrivateIpfsOwnershipCredential",
   format: {
     jwt_vc: {
@@ -8,7 +8,7 @@ const ownership_vc_presentation_definition = {
   },
   input_descriptors: [
     {
-      id: "ef91319b-81a5-4f71-a602-de3eacccb54b",
+      id: "PrivateIpfsOwnershipCredentialConstraints#",
       format: {
         jwt_vc: {
           alg: ["ES256", "ES384"],
@@ -54,3 +54,7 @@ const access_vc_presentation_definition = {
     ],
 };
 */
+
+module.exports = {
+  ownership_vc_presentation_definition
+};  

@@ -1,6 +1,8 @@
+solve unknown verifier bug by adapting the verifier-config: https://github.com/pherbke/seneca/blob/main/usecases/resume/src/lib/verifier-config.ts
 add did of supply chain item to vc credential subject
 implement following work flow: user traces item by inputting did, then it clicks on metadata a pop up window opens hich either displays the metadata (if the file is public) or it displays a qr code that must be scanned in order to verify by presenting VP with authorization claim --> verification service (built in download/:cid endpoint that is meant for private files)
 add loading symbolso that user knows that one needs to wait for supply chain event documentation
 add auth routes: authorize endpoint verifies vc_jwt regarding if the controller of the did is also the issuer of the vc with access rights to specific private ipfs file or the issuer is the supplytrust server
 add "claim your VC" path in the navigation bar where the user can get VC for accessing private ipfs file --> issuer service (build own endpoints)
 add in readme how the not implemented private ipfs access flow for supply chain entities work that have not written the private supply chain event metadata file and are thus not owner.they get a vc from the owner and since the owner is also the controller of the did document at the time the supply chain event metadata ipfs file was created and thus mentioned in the respective did doc version SupplyTrust is able to verify that the access vc comes from the owner of the supply chain event metada private ipfs file writer
+make certs used by issuer and verifier private by storiung it in env variables
