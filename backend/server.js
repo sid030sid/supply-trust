@@ -27,6 +27,7 @@ wss.on("connection", (ws, req) => {
   // This example assumes a URL parameter `cid` or another identifier
   const url = new URL(req.url, `http://${req.headers.host}`);
   const state = url.searchParams.get("state");
+  ws.state = state;
   
   if (state) {
     // Map the connection to the user's unique `cid`

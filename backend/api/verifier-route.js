@@ -103,8 +103,7 @@ router.route('/direct-post/:state').post(async (req, res) => {
         const token = jwt.sign(payload, privateKey, { algorithm: "ES256" });
 
         // send token to client via websocket
-        console.log("clients in wss:", req.app.get("wss").clients)
-        const wsClient = req.app.get("wss").clients.get(state); //TODO for dev: this should be ws instead of wss
+        const wsClient = Array.from(req.app.get("wss").clients).find(client => client.state === state); //TODO for dev: this should be ws instead of wss
         if (wsClient && wsClient.readyState === WebSocket.OPEN) { // Check for WebSocket client and send token if connected
             wsClient.send(JSON.stringify({ token }));
         }
