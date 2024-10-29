@@ -53,8 +53,11 @@ export default function SCDMS(props) {
         //alert for better UX
         alert("Your supply chain event metadata is stored as CID: "+cid+"\nPlease wait for the supply chain event to be fully documented with did:cheqd.")
 
-        //if checked true, then ipfs file with event metadata is private and service endpoint for requesting access to ipfs file must be included in did doc
+        
         const serviceEndpoints = []
+        
+        /*
+        //if checked true, then ipfs file with event metadata is private and service endpoint for requesting access to ipfs file must be included in did doc
         if(checked && accessRequestUrl !== ""){
             if(event === "producing" | event === "manufacturing"){
                 serviceEndpoints.push(
@@ -73,6 +76,10 @@ export default function SCDMS(props) {
                     }
                 )
             }
+        }*/
+        let endpointSuffix = "ipfs"
+        if(checked){
+            endpointSuffix = "private-ipfs"
         }
 
         // create did or update did depending on supply chain event
@@ -81,7 +88,7 @@ export default function SCDMS(props) {
             // create endpoints for services in did doc
             serviceEndpoints.push(
                 {
-                    "idFragment": "ipfs",
+                    "idFragment": endpointSuffix,
                     "type": "LinkedDomains",
                     "serviceEndpoint": [cid]
                 }
@@ -106,7 +113,7 @@ export default function SCDMS(props) {
                     2. update controller to be newController --> TODO in future (once Cheqd bug fixed)
                 */
                 serviceEndpoints.push({
-                    "id": did+"#ipfs",
+                    "id": did+"#"+endpointSuffix,
                     "type": "LinkedDomains",
                     "serviceEndpoint": [
                       cid                        
@@ -154,7 +161,7 @@ export default function SCDMS(props) {
                     */
                     serviceEndpoints.push(
                         {
-                            "id": did+"#ipfs",
+                            "id": did+"#"+endpointSuffix,
                             "type": "LinkedDomains",
                             "serviceEndpoint": [
                                 cid                        
@@ -187,7 +194,7 @@ export default function SCDMS(props) {
                     // create service endpoints to reference metadata stored on IPFS
                     serviceEndpoints.push(
                         {
-                            "idFragment": "ipfs",
+                            "idFragment": endpointSuffix,
                             "type": "LinkedDomains",
                             "serviceEndpoint": [cid]
                         }
@@ -216,7 +223,7 @@ export default function SCDMS(props) {
             }
         }
 
-        // if supply chain event metadata file in ipfs is private, then TrustSupply issues VC using pre-authorized code flow folowing OID4VCI
+        // if supply chain event metadata file in ipfs is private, then SupplyTrust issues VC using pre-authorized code flow folowing OID4VCI
         if(checked){
             // create credential offer
             const credentialOfferRes = await axios.post("/api-issuer/offer", {cid: cid, credentialType: "PrivateIpfsOwnershipCredential"})
@@ -267,7 +274,7 @@ export default function SCDMS(props) {
                             label="Document privately?" 
                         />
                     </FormGroup>
-                    {
+                    {/*
                         checked?
                             <TextField
                                 margin="normal"
@@ -281,7 +288,7 @@ export default function SCDMS(props) {
                             />
                         :
                         ""
-                    }
+                    */}
                 </FormControl>
                 {
                     event === "shipping" | event === "receiving" ?

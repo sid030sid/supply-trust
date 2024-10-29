@@ -46,6 +46,8 @@ const authenticateToken = async (req, res, next) => {
 router.post("/offer", async (req, res) => {
     // get cid to which ipfs credential is issued
     const cid = req.body.cid
+    const did = req.body.did
+    const didDocVersion = req.body.didDocVersion
 
     // get requested credential type and checck its validness
     const credentialType = req.body.credentialType

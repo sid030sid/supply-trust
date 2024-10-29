@@ -31,9 +31,9 @@ export default function TracingTable(props) {
                 {event.didDocumentMetadata.updated ? event.didDocumentMetadata.updated : event.didDocumentMetadata.created}
               </TableCell>
               <TableCell align="right">
-                <Link href={`trace-and-track/${event.service.find(i=>{return(i.id.includes("ipfs"))})?.serviceEndpoint[0]}?private=${event.service.find(i=>{return(i.id.includes("requestAccessUrl"))})?.serviceEndpoint?.length > 0 ?true:false}`}>
+                <Link href={`trace-and-track/${event.service.find(i=>{return(i.id.includes("ipfs"))})?.serviceEndpoint[0]}?private=${event.service.find(i=>{return(i.id.includes("private-ipfs"))})?.serviceEndpoint?.length > 0 ?true:false}`}>
                     See details
-                    {event.service.find(i=>{return(i.id.includes("requestAccessUrl"))})?.serviceEndpoint?.length > 0 ?  
+                    {event.service.find(i=>{return(i.id.includes("private-ipfs"))})?.serviceEndpoint?.length > 0 ?  
                       <LockIcon/>
                     : ""
                   }
