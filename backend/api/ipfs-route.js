@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
 require("dotenv").config();
-
 const {PinataSDK: PinataIpfsApi} = require("pinata-web3");
 const {PinataSDK: PinataFileApi} = require("pinata");
 
@@ -16,6 +17,8 @@ const fileApi = new PinataFileApi({
     pinataJwt: process.env.PINATA_API_JWT,
     pinataGateway: process.env.PINATA_API_GATEWAY,
 });
+
+const publicKey = fs.readFileSync("./certs/public.pem", "utf8");
 
 router.route('/upload').post(async (req, res)=>{
     try {
@@ -35,17 +38,13 @@ router.route('/upload').post(async (req, res)=>{
         let upload;
         let cid;
         if(req.query.private==="true"){
-            // check if requester is authorized to upload to private ipfs?
-            // if not, send error message
-                //TODO
+            // TODO in future: check if requester is authorized to upload to private ipfs?
 
-            // else, upload file to private ipfs
+            // upload file to private ipfs
             upload = await fileApi.upload.file(file);
-            //upload = await ipfsApi.pinJSONToIPFS(req.body.data)
             cid = upload.cid
         }else{
             //upload file to public ipfs
-            //upload = await ipfsApi.upload.file(req.body.data);
             upload = await ipfsApi.upload.file(file);
             cid = upload.IpfsHash
         }
@@ -61,7 +60,6 @@ router.route('/upload').post(async (req, res)=>{
     }
 })
 
-/*
 router.route('/download-public-ipfs/:cid').get(async (req, res) => {
     try {
         const cid = req.params.cid;
@@ -87,29 +85,49 @@ router.route('/download-public-ipfs/:cid').get(async (req, res) => {
 
 router.route('/download-private-ipfs/:cid').get(async (req, res) => {
     try {
+        // get cid from params and check if it is present
         const cid = req.params.cid;
-
         if (cid === "") {
             return res.status(400).send("ERROR - Invalid query: missing cid in params");
         }
 
-        const file = await fileApi.gateways.get(cid);
-        const data = await file.data.text()
+        // get bearer token and check if it is present
+        const authHeader = req.headers["authorization"];
+        const token = authHeader && authHeader.split(" ")[1];
+        if (!token) return res.status(400).send("ERROR - Bearer token missing in headers");
 
-        // If data was found, send it to the client
-        if (data) {
-            return res.send(data);
-        } else {
-            return res.status(404).send("File not found on private IPFS");
-        }
+        // check validity of token for request
+        jwt.verify(token, publicKey, { algorithm: "ES256" }, async (err, decoded) => { //TODO: should by public key
+            if (err) {
+              return res.status(401).send("Invalid token");
+            }
+          
+            if (decoded.exp < Math.floor(Date.now() / 1000)) {
+              return res.status(402).send("Token has expired");
+            }
+          
+            if (decoded.cid !== cid) {
+              return res.status(403).send("Token valid for private IPFS file with cid: " + decoded.cid+" and not cid: "+cid);
+            }
+          
+            // download file from private ipfs
+            const file = await fileApi.gateways.get(cid);
+            const data = await file.data.text()
+
+            // If data was found, send it to the client
+            if (data) {
+                return res.send(data);
+            } else {
+                return res.status(404).send("File not found on private IPFS");
+            }
+        });
     } catch (error) {
         console.error("Error in download route:", error);
         return res.status(500).send("Server error");
     }
 });
-*/
 
-
+/*
 //TODO: add middleware that checks if user is authorized to download from private ipfs
 router.route('/download/:cid').get(async (req, res) => {
     try {
@@ -148,43 +166,6 @@ router.route('/download/:cid').get(async (req, res) => {
         }
     }
 });
-
-
-/*
-router.route('/download/:cid').get(async (req, res)=>{
-    try {
-        const cid = req.params.cid
-
-        if(cid===""){
-            res.send("ERROR - Invalid query: missing cid in params")
-        }
-        
-        let data;
-        // download file from public ipfs
-            // TODO: think about whether this is actually necessary... i do not believe so as the link will be directly given in frontend
-        data = await ipfsApi.gateways.get(cid);
-        console.log("data from public ipfs", data)
-        if(data === ""){ // if not found, check private ipfs
-            data = await fileApi.gateways.get(cid);
-            console.log("data from private ipfs", data)
-
-            const url = await fileApi.gateways.createSignedURL({
-                cid: cid,
-                expires: 1800,
-            })
-            console.log(url)
-        }
-
-        
-        // if found, check if requester is authorized to download from private ipfs
-        // if not, send error message
-        // else, forward file to private ipfs
-        //TODO: VC based access system!
-        res.send(data)
-    } catch (error) {
-        console.log(error)
-    }
-})
 */
 
 //TODO: endpoint that returns true if ipfs file is private, false if public (solely based on cid)

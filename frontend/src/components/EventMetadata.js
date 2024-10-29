@@ -55,11 +55,22 @@ const EventMetadata = () => {
                 //websocket connection to get token from verifier service
                 const state = requestOid4vpUrl.data.state
                 const ws = new WebSocket(`wss://${process.env.REACT_APP_BASE_URL}/ws?state=${state}`);
-                ws.onmessage = (event) => {
+                ws.onmessage = async (event) => {
                     const data = JSON.parse(event.data);
-                    if (data.token) {
-                        console.log("Received token:", data.token);
-                        // Save or use the token in your app as needed
+                    const token = data.token;
+                    if (token) {
+                        //download data from private ipfs
+                        const res = await axios.get(`/api-ipfs/download-private-ipfs/${cid}`, { headers: {"Authorization" : `Bearer ${token}`} });
+
+                        //if file found show content to user
+                        if(res.data?.data?.event !== null){
+                            setOid4vpUrl("")
+                            setEventMetadata(res.data.data)
+                        }else{
+                            alert("Private IPFS file not found")
+                        }
+                    }else{
+                        alert("Access token for private IPFS not found")
                     }
                 };
                 ws.onclose = () => {
@@ -67,7 +78,7 @@ const EventMetadata = () => {
                 };
             }else{
                 //download file from public ipfs
-                const res = await axios.get(`/api-ipfs/download/${cid}`);
+                const res = await axios.get(`/api-ipfs/download-public-ipfs/${cid}`);
 
                 //if file found show content to user
                 if(res.data?.data?.event !== null){
