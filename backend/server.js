@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const WebSocket = require("ws");
+const http = require("http");
 
 const PORT = process.env.PORT || 3001;
 
@@ -15,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // to get data send by wallets into req.body
 
 // Set up WebSocket server
-const server = require("http").createServer(app);
+const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 // Store active WebSocket clients with their unique identifiers
@@ -23,6 +24,7 @@ const clients = new Map();
 
 wss.on("connection", (ws, req) => {
   // This example assumes a URL parameter `cid` or another identifier
+  console.log("WebSocket connection established:", req.url);
   const url = new URL(req.url, `http://${req.headers.host}`);
   const state = url.searchParams.get("state");
   
