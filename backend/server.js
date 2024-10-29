@@ -18,6 +18,7 @@ app.use(express.urlencoded({ extended: true })); // to get data send by wallets 
 // Set up WebSocket server
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
+app.set("wss", wss);
 
 // Store active WebSocket clients with their unique identifiers
 const clients = new Map();
