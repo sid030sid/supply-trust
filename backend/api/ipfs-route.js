@@ -70,7 +70,6 @@ router.route('/download-public-ipfs/:cid').get(async (req, res) => {
         }
 
         const data = await ipfsApi.gateways.get(cid);
-        console.log(data)
 
         // If data was found, send it to the client
         if (data) {

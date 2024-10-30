@@ -63,9 +63,10 @@ const EventMetadata = () => {
                         const res = await axios.get(`/api-ipfs/download-private-ipfs/${cid}`, { headers: {"Authorization" : `Bearer ${token}`} });
 
                         //if file found show content to user
-                        if(res.data?.data?.event !== null){
+                        console.log("private ipfs download", res)
+                        if(res.data?.event !== null){
                             setOid4vpUrl("")
-                            setEventMetadata(res.data.data)
+                            setEventMetadata(res.data)
                         }else{
                             alert("Private IPFS file not found")
                         }
@@ -79,6 +80,7 @@ const EventMetadata = () => {
             }else{
                 //download file from public ipfs
                 const res = await axios.get(`/api-ipfs/download-public-ipfs/${cid}`);
+                console.log("public ipfs res download", res)
 
                 //if file found show content to user
                 if(res.data?.data?.event !== null){
