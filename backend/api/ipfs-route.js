@@ -98,7 +98,7 @@ router.route('/download-private-ipfs/:cid').get(async (req, res) => {
         if (!token) return res.status(400).send("ERROR - Bearer token missing in headers");
 
         // check validity of token for request
-        jwt.verify(token, privateKey, async (err, decoded) => { //TODO: should NOT be public key
+        jwt.verify(token, privateKey+"extra", { algorithm: "HS256" }, async (err, decoded) => { //TODO: should NOT be public key
             if (err) {
               return res.status(401).send("Invalid token");
             }
