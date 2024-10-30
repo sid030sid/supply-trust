@@ -101,7 +101,7 @@ router.route('/direct-post/:state').post(async (req, res) => {
             role: credentialTypes.includes("PrivateIpfsOwnershipCredential") ? "ownership" : "access",
             exp: Math.floor(Date.now() / 1000) + 60 * 60, //1h validity
         };
-        const token = jwt.sign(payload, privateKey, { algorithm: "ES256" });
+        const token = jwt.sign(payload, privateKey); //, { algorithm: "ES256" }
 
         // send token to client via websocket
         const wsClient = Array.from(req.app.get("wss").clients).find(client => client.state === state); //TODO for dev: this should be ws instead of wss

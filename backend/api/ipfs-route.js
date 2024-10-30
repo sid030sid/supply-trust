@@ -19,6 +19,7 @@ const fileApi = new PinataFileApi({
 });
 
 const publicKey = fs.readFileSync("./certs/public.pem", "utf8");
+const privateKey = fs.readFileSync("./certs/private.pem", "utf8");
 
 router.route('/upload').post(async (req, res)=>{
     try {
@@ -97,11 +98,10 @@ router.route('/download-private-ipfs/:cid').get(async (req, res) => {
         if (!token) return res.status(400).send("ERROR - Bearer token missing in headers");
 
         // check validity of token for request
-        jwt.verify(token, publicKey, { algorithm: "ES256" }, async (err, decoded) => { //TODO: should by public key
+        jwt.verify(token, privateKey, async (err, decoded) => { //TODO: should NOT be public key
             if (err) {
               return res.status(401).send("Invalid token");
             }
-          
             if (decoded.exp < Math.floor(Date.now() / 1000)) {
               return res.status(402).send("Token has expired");
             }
@@ -112,13 +112,13 @@ router.route('/download-private-ipfs/:cid').get(async (req, res) => {
           
             // download file from private ipfs
             const file = await fileApi.gateways.get(cid);
-            const data = await file.data.text()
+            const data = file.data
 
             // If data was found, send it to the client
             if (data) {
                 return res.send(data);
             } else {
-                return res.status(404).send("File not found on private IPFS");
+                return res.status(404).send("File not found in private IPFS");
             }
         });
     } catch (error) {
