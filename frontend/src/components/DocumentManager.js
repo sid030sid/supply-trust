@@ -6,13 +6,6 @@ import FactCheckIcon from '@mui/icons-material/FactCheck';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { Button } from '@mui/material';
 
-const item = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  px: 5,
-};
-
 const DocumentManager = () => {
     return(
       <div>
