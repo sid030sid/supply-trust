@@ -1,6 +1,9 @@
-import {Drawer, List, ListItem, ListItemButton, Button, Divider} from '@mui/material';
+import {Drawer, List, ListItemButton} from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Logo from '../../favicon.ico'
 
 function DrawerMenu(props) {
 
@@ -21,13 +24,30 @@ function DrawerMenu(props) {
                 <ListItemButton onClick={()=>{props.closeDrawerMenu(); navigate("/trace-and-track")}}>
                     Trace and Track
                 </ListItemButton>
-                <ListItemButton onClick={()=>{props.closeDrawerMenu(); navigate("/scdms")}}>
-                    Document events
+                <ListItemButton onClick={()=>{props.closeDrawerMenu(); navigate("/document")}}>
+                    Document Supply Chain
                 </ListItemButton>
-                <ListItemButton onClick={()=>{props.closeDrawerMenu(); navigate("/access-manager")}}>
-                    Manage Private IPFS Access
+                <ListItemButton onClick={()=>{props.closeDrawerMenu(); navigate("/manage")}}>
+                    Manage Documents
                 </ListItemButton>
             </List>
+
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    mt: 'auto',
+                    mb: 2,
+                    p: 2,
+                    textAlign: 'center',
+                }}
+            >
+                <img src={Logo} alt="logo" style={{ width: 40, height: 40 }} />
+                <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                    SupplyTrust
+                </Typography>
+            </Box>
         </Drawer>
     );
 }

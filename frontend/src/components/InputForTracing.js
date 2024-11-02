@@ -123,14 +123,6 @@ export default function InputForTracing(props) {
                 >
                     Trace
                 </Button>
-                <div>
-                    <Typography component="h3" variant="h5" sx={{marginBottom:3}}>
-                        did with public ipfs file: ???
-                    </Typography>
-                    <Typography component="h3" variant="h5" sx={{marginBottom:3}}>
-                        did with private ipfs file: did:cheqd:testnet:444caf1b-2ab4-410b-a981-8d67d01a2285
-                    </Typography>
-                </div>
             </Box>
             {history?.length === 0 ? 
                 ""

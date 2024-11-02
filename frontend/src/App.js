@@ -26,10 +26,10 @@ function App() {
         />
         <Routes>
           <Route index element={<Home/>} />
-          <Route path="/access-manager" element={<AccessManager/>}/>
+          <Route path="/manage" element={<AccessManager/>}/>
           <Route path="/trace-and-track" element={<InputForTracing/>}/>
           <Route path="/trace-and-track/:cid" element={<EventMetadata/>}/>
-          <Route path="/scdms" element={<SCDMS/>}/>
+          <Route path="/document" element={<SCDMS/>}/>
           <Route path="*" element={<NoPage/>} />
         </Routes>
       </BrowserRouter>
