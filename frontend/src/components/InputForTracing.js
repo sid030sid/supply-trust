@@ -113,7 +113,7 @@ export default function InputForTracing(props) {
                     label="DID"
                     name="DID"
                     autoFocus
-                    helperText="To test, enter: did:cheqd:testnet:fa68c783-5c85-4431-afda-d158e36a9100"
+                    helperText="To test, enter: did:cheqd:testnet:ecc1d9b3-cd24-4abc-9440-a27f77a38643"
                 />
                 <Button
                     type="submit"

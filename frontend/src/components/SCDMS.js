@@ -50,7 +50,7 @@ export default function SCDMS(props) {
         const cid = res.data
 
         //alert for better UX
-        alert("Your supply chain event metadata is stored as CID: "+cid+"\nPlease wait for the supply chain event to be fully documented with did:cheqd.")
+        alert("Your supply chain event metadata is stored as CID: "+cid+"\nPlease wait for the supply chain event to be fully documented with did:cheqd.\nThis may take a while, please wait for the next verification and do not refresh the web app in the meantime.")
 
         
         const serviceEndpoints = []
