@@ -2,7 +2,7 @@ import {Drawer, List, ListItemButton} from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
 import Logo from '../../favicon.ico'
 
 function DrawerMenu(props) {
@@ -44,9 +44,9 @@ function DrawerMenu(props) {
                 }}
             >
                 <img src={Logo} alt="logo" style={{ width: 40, height: 40 }} />
-                <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                <Link href="https://github.com/sid030sid/supply-trust" sx={{ mt: 1 }}>
                     SupplyTrust
-                </Typography>
+                </Link>
             </Box>
         </Drawer>
     );

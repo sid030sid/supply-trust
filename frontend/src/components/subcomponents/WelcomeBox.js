@@ -46,7 +46,7 @@ export default function WelcomeBox() {
         Register
       </Button>
       <Typography variant="body2" color="inherit" sx={{ mt: 2 }}>
-        See <Link color="inherit" href="https://github.com/sid030sid/supply-trust" underline="always">Documentation</Link>
+        About <Link color="inherit" href="https://github.com/sid030sid/supply-trust" underline="always">SupplyTrust</Link>
       </Typography>
     </WelcomeBoxLayout>
   );

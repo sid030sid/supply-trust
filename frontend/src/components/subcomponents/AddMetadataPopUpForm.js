@@ -49,7 +49,7 @@ export default function AddMetadataPopUpForm(props) {
                 <DialogContent>
                     <DialogContentText>
                         Add an attribute and its value to uniquely descriibe your event.
-                        Please make sure to follow the standard of your domain.
+                        Please make sure to follow the standard of your supply chain's domain.
                     </DialogContentText>
                     <TextField
                         margin="dense"

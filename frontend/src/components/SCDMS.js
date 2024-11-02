@@ -25,7 +25,6 @@ export default function SCDMS(props) {
     const [material, setMaterial] = React.useState("")
     const [materials, setMaterials] = React.useState([])
     const [checked, setChecked] = React.useState(false)
-    const [accessRequestUrl, setAccessRequestUrl] = React.useState("")
     const [newController, setNewController] = React.useState("")
     const [credentialOfferUrl, setCredentialOfferUrl] = React.useState("")
 
@@ -260,8 +259,9 @@ export default function SCDMS(props) {
             }}
         >
             <Typography component="h1" variant="h5">
-                Document your supply chain event!
+                Document Supply Chain
             </Typography>
+            <p>Document the supply chain events of your supply chain items using did:cheqd.</p>
             <Box sx={{ mt: 1 }}>
                 <FormControl fullWidth sx={{marginTop: 4}}>
                     <InputLabel id="event-selector">Event</InputLabel>
@@ -313,7 +313,7 @@ export default function SCDMS(props) {
                         name="DID"
                         value={did}
                         onChange={(e) => setDid(e.target.value)}
-                        helperText="Scan the QR code of your item to get its DID"
+                        helperText="Scan the QR code of your supply chain item to get its DID"
                     />
                     :
                     ""
@@ -328,7 +328,7 @@ export default function SCDMS(props) {
                         name="New Controller"
                         value={newController}
                         onChange={(e) => setNewController(e.target.value)}
-                        helperText="DID of new owner of item"
+                        helperText="DID of the new owner of the supply chain item"
                     />
                     :
                     ""
@@ -358,11 +358,12 @@ export default function SCDMS(props) {
                                 }
                                 <Box>
                                     <TextField 
-                                        label="DID material"
+                                        label="Material"
                                         margin="normal"
                                         fullWidth
                                         value={material}
                                         onChange={(e) => setMaterial(e.target.value)}
+                                        helperText="DID of material used for manufacturing"
                                     ></TextField>
                                     <Button onClick={()=>{setMaterials([...materials, material]); setMaterial("")}}>Add material</Button>
                                 </Box>  
