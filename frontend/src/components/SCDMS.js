@@ -99,7 +99,7 @@ export default function SCDMS(props) {
 
             if(didCreationRes){
                 workingDid = didCreationRes.data.did
-                alert("Your newly produced supply chain item is identified as "+workingDid+". Verify by performing tracing and tracking.")
+                alert("Your newly produced supply chain item is identified as "+workingDid+". Please store this DID for future usage.")
             }
         }else{
             if(event === "shipping"){
@@ -219,7 +219,7 @@ export default function SCDMS(props) {
 
                     if(didCreationRes){
                         workingDid = didCreationRes.data.did
-                        alert("Your newly manufactured supply chain item is identified as "+workingDid+". Verify by performing tracing and tracking.")
+                        alert("Your newly manufactured supply chain item is identified as "+workingDid+". Please store this DID for future usage.")
                     }
                 }
             }

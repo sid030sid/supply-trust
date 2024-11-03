@@ -3,7 +3,7 @@ _SupplyTrust_ is a decentralized Supply Chain data management tool for supply ch
 
 ## Use _SupplyTrust_
 ### Use current test version of _SupplyTrust_
-The current test version of _SupplyTrust_ can be found [here](https://supply-trust-8ee27263c820.herokuapp.com/).
+The current test version of _SupplyTrust_ can be found [here](https://supply-trust-8ee27263c820.herokuapp.com/). In order to receive and present the Verifiable Credentials issued by _SupplyTrust_, [grant.io's Data Wallet](https://igrant.io/datawallet.html) is recommended.
 
 ### Use _SupplyTrust_ locally
 1. Set up:
