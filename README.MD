@@ -9,21 +9,30 @@ The current test version of _SupplyTrust_ can be found [here](https://supply-tru
 1. Set up:
     - run `npm install` in terminal while being in root folder to download packages for backend
     - run `cd frontend` and run `npm install` again to download packages for frontend
-    - go back to root folder by running `cd ..`
+    - go back to root folder by running `cd ..` in terminal
     - add `.env` files...
         - in folder `backend` and add the following env variables:
-            - ``CHEQD_CREDENTIAL_SERVICE_TOKEN`` (get it [here]())
-            - ``PINATA_API_JWT`` (get it following this [guide]())
-            - ``PINATA_API_GATEWAY`` (get it following this [guide]())
+            - ``CHEQD_CREDENTIAL_SERVICE_TOKEN`` (get it [here](https://docs.cheqd.io/product/getting-started/studio))
+            - ``PINATA_API_JWT`` (get it following this [guide](https://docs.pinata.cloud/quickstart))
+            - ``PINATA_API_GATEWAY`` (get it following this [guide](https://docs.pinata.cloud/quickstart))
             - ``BASE_URL``="http://localhost:3001"
         - in folder `frontend` and add the following env variables:
             - ``DANGEROUSLY_DISABLE_HOST_CHECK``=true
-    **Note**: ensure that `package.json` in folder frontend contains `proxy=http://localhost:3001` as JSON attribute
 2. Start running _SupplyTrust_ web app on localhost:
     - run `npm start` in terminal while in root folder (this command automatically starts the backend and frontend)
-3. Test SupplyTrust's tracing and tracking by entering ``did:cheqd:testnet:eb41cc0f-b773-440e-b675-0e4310368a52`` in [tracing and tracking form](http://localhost:3000/trace-and-track)
+    **Note**: ensure that `package.json` in folder ``frontend`` contains `proxy=http://localhost:3001` as JSON attribute
+3. Test SupplyTrust's tracing and tracking by entering ``did:cheqd:testnet:ecc1d9b3-cd24-4abc-9440-a27f77a38643`` in [tracing and tracking form](http://localhost:3000/trace-and-track)
+
+### Demonstration of usage
+How to use _SupplyTrust_ can be seen in this [demo video](https://www.youtube.com/watch?v=UfLoIFfljGA).
 
 ## FAQ
+### What can be done with _SupplyTrust_?
+1. Documenting Supply Chain: _SupplyTrust_ enables its users to document supply chain items and the events in the item's lifecycle, such as production, shipping, receiving, or manufacturing. The supply chain documentation functionality is demonstrated from minute 1:36 onwards in this [video](https://www.youtube.com/watch?v=UfLoIFfljGA).
+2. Private documentation: _SupplyTrust_ gives its users the option to store a supply chain item's events in the priavte IPFS environment powered by Pinata. This feature strengthens privacy, desired by users which do not want to publicly reveal their supply chain data, possibly containing business secrets.
+3. Tracing and tracking: _SupplyTrust_ provides a simple-to-use interface for tracing and tracking supply chain items based on their DID. The tracking and tracing functionality is demonstrated till minute 1:35 in this [video](https://www.youtube.com/watch?v=UfLoIFfljGA)
+4. Managing documents: _SupplyTrust_ enables its users to manage their documents through a simple user interface, giving users an ideal overview of their documents and, in the case of private docuemnts, to whom they have granted access through VC issuance. (Note: this functionality is only showcased and not implemented in the current version of _SupplyTrust_)
+
 ### What inspired me to create _SupplyTrust_?
 The idea for _SupplyTrust_ emerged from a pressing need for accountability across supply chains. Currently, many supply chain entities can operate without transparency, allowing room for potential violations of environmental standards, human rights, and legal regulations. _SupplyTrust_ aims to offer a solution that distinguishes responsible entities from those that are less compliant, encouraging ethical practices by providing a trustworthy platform for tracking and tracing supply chain activities. This transparency puts pressure on less responsible actors to disclose their practices or risk losing credibility with consumers.
 
@@ -42,13 +51,13 @@ For regulators, auditing and enforcing compliance across complex supply chains r
     - [did:cheqd](https://docs.cheqd.io/product/architecture/adr-list/adr-001-cheqd-did-method) as DID method for integrating DIDs
     - [cheqd Studio](https://studio.cheqd.net/) for simplified creation and management of DID of type did:cheqd
     - [OpendID for Verifiable Credential Issuance (OID4VCI)](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html) as protocol for issuing VCs to supply chain entities to attest their ownership of their recorded supply chain events
-    - [OpendID for Verifiable Presentation (OID4VP)](https://openid.net/specs/openid-4-verifiable-presentations-1_0.html) as protocol for verifying VCs for granting access to private IPFS powered by Pinata
+    - [OpendID for Verifiable Presentation (OID4VP)](https://openid.net/specs/openid-4-verifiable-presentations-1_0.html) as protocol for verifying VCs that grant access to private IPFS files stored in the private IPFS powered by Pinata
     - [InterPlanetary File System (IPFS)](https://ipfs.tech/) for off-chain storage to bypass limited DID Document size in cheqd
     - [Pinata](https://pinata.cloud) for integrating IPFS while offering supply chain entities the option to store their possibly business relevant supply chain event metadata files in IPFS via´[Web3 API](https://pinata.cloud/features#web3) or in the private IPFS environment powered by Pinata via its [File API](https://pinata.cloud/features#file-api)
     - [ReactJS](https://react.dev/) for creating the frontend of _SupplyTrust_
     - [NodeJS](https://nodejs.org/en) and [ExpressJS](https://expressjs.com/) for creating the backend of _SupplyTrust_
     - [Heroku](https://www.heroku.com/) for deploying production version of _SupplyTrust_
-    - [grant.io's Data Wallet](https://igrant.io/datawallet.html) for testing OID4VC based issuance and verification
+    - [grant.io's Data Wallet](https://igrant.io/datawallet.html) for testing OID4VC based issuance and verification in production
 
 ### What I learned creating _SupplyTrust_
 Creating _SupplyTrust_ deepened my understanding of DIDs and VCs, especially as I explored the potential and limitations of the did:cheqd ecosystem in detail. Working extensively with did:cheqd gave me insights into how DIDs can enhance transparency and accountability in supply chains. Additionally, building websockets was a valuable experience, allowing me to handle real-time data flow efficiently. Implementing OpenID protocols to issue and verify VCs was a significant challenge, but it strengthened my grasp of how VCs can be used for secure, decentralized identity verification, highlighting both their capabilities and current limitations in practical applications.
