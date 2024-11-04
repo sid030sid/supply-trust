@@ -8,6 +8,8 @@ The current test version of _SupplyTrust_ can be found [here](https://supply-tru
 ### Use _SupplyTrust_ locally
 1. Set up:
     - run `npm install` in terminal while being in root folder to download packages for backend
+
+    **Note**: NodeJS v20.8.1 was used for implementing _SupplyTrust.
     - run `cd frontend` and run `npm install` again to download packages for frontend
     - go back to root folder by running `cd ..` in terminal
     - add an `.env` file in the root folder and add the following env variables:
