@@ -115,6 +115,7 @@ const EventMetadata = () => {
                     <h2>Supply chain event is private.</h2>
                     <p>Please present Private IPFS Ownership Credential so that SupplyTrust can verify your access right for the event metadata stored in the private IPFS powered by Pinata.</p>
                     <QRCode value={oid4vpUrl}/>
+                    <p>NOTE: Ensure that you only have one Private IPFS Ownership Credential in your wallet before connecting to SupplyTrust for OID4VP.</p>
                 </div>
                 :
                 ""

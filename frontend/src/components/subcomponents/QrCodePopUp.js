@@ -25,10 +25,13 @@ export default function QrCodePopUp(props) {
                     </div>
                     <br></br>
                     <DialogContentText>
-                        NOTE: To obtain verifiable credentials wallets are needed. We recommend using grant.io's  <Link href="https://igrant.io/datawallet.html">Data Wallet</Link>.         
+                        NOTE:         
                     </DialogContentText>
                     <DialogContentText>
-                        NOTE: Please enter 1234, when your wallet will ask you for a user pin during OID4VCI with pre-authorized code flow.         
+                        1. To obtain verifiable credentials wallets are needed. We recommend using grant.io's  <Link href="https://igrant.io/datawallet.html">Data Wallet</Link>.
+                    </DialogContentText>
+                    <DialogContentText>
+                        2. Please enter 1234, when your wallet will ask you for a user pin during OID4VCI with pre-authorized code flow.         
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
