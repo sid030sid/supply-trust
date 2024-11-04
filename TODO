@@ -1,9 +1,5 @@
-clean frontend views and enhance UX --> change IPFS AccessManagerPage
-find ouit what happens if data wallet has two VCs of the same type? how can i get an error message in the client if the OID4VP fails cos the user has no valid vc? --> imrpove UX
-solve unknown verifier bug by adapting the verifier-config: https://github.com/pherbke/seneca/blob/main/usecases/resume/src/lib/verifier-config.ts
-implement following work flow: user traces item by inputting did, then it clicks on metadata a pop up window opens hich either displays the metadata (if the file is public) or it displays a qr code that must be scanned in order to verify by presenting VP with authorization claim --> verification service (built in download/:cid endpoint that is meant for private files)
-add loading symbolso that user knows that one needs to wait for supply chain event documentation
-add auth routes: authorize endpoint verifies vc_jwt regarding if the controller of the did is also the issuer of the vc with access rights to specific private ipfs file or the issuer is the supplytrust server
-add "claim your VC" path in the navigation bar where the user can get VC for accessing private ipfs file --> issuer service (build own endpoints)
-add in readme how the not implemented private ipfs access flow for supply chain entities work that have not written the private supply chain event metadata file and are thus not owner.they get a vc from the owner and since the owner is also the controller of the did document at the time the supply chain event metadata ipfs file was created and thus mentioned in the respective did doc version SupplyTrust is able to verify that the access vc comes from the owner of the supply chain event metada private ipfs file writer
+debug error occruing when users with more than one VC issued by SupplyTrust try to perform OID4VP
+improve UX by making SupplyTrust be mentioned instead of "connect to unknown org" during OID4VP, potential solution: adapt the verifier-config as done here: https://github.com/pherbke/seneca/blob/main/usecases/resume/src/lib/verifier-config.ts
+improve UI by replacing the alert messaging with more appealing material ui components
+add loading symbol so that user knows that one needs to wait for supply chain event documentation during OID4VCI
 make certs used by issuer and verifier private by storiung it in env variables

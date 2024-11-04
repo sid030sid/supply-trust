@@ -33,14 +33,14 @@ How to use _SupplyTrust_ can be seen in this [demo video](https://www.youtube.co
 3. Tracing and tracking: _SupplyTrust_ provides a simple-to-use interface for tracing and tracking supply chain items based on their DID. The tracking and tracing functionality is demonstrated till minute 1:35 in this [video](https://www.youtube.com/watch?v=UfLoIFfljGA)
 4. Managing documents: _SupplyTrust_ enables its users to manage their documents through a simple user interface, giving users an ideal overview of their documents and, in the case of private docuemnts, to whom they have granted access through VC issuance. (Note: this functionality is only showcased and not implemented in the current version of _SupplyTrust_)
 
-### What inspired me to create _SupplyTrust_?
+### What is the motivation behind _SupplyTrust_?
 The idea for _SupplyTrust_ emerged from a pressing need for accountability across supply chains. Currently, many supply chain entities can operate without transparency, allowing room for potential violations of environmental standards, human rights, and legal regulations. _SupplyTrust_ aims to offer a solution that distinguishes responsible entities from those that are less compliant, encouraging ethical practices by providing a trustworthy platform for tracking and tracing supply chain activities. This transparency puts pressure on less responsible actors to disclose their practices or risk losing credibility with consumers.
 
 Furthermore, consumers often lack insight into the origin and handling of the products they purchase, making it difficult to align purchases with personal ethics, dietary restrictions, or environmental concerns. _SupplyTrust_ bridges this gap, empowering consumers with verifiable information about product histories.
 
 For regulators, auditing and enforcing compliance across complex supply chains remains a significant challenge. By adopting _SupplyTrust_, regulators gain a powerful tool to verify that entities adhere to established standards in health, environmental protection, and human rights. Through this system, _SupplyTrust_ can play a vital role in fostering more transparent, accountable, and ethical global supply chains.
 
-### How I built _SupplyTrust_?
+### How _SupplyTrust_ was built?
 - **DIDs**: _SupplyTrust_ uses [Decentralized Identifiers (DIDs)](https://www.w3.org/TR/did-core/) to uniquely identify supply chain items, where each version of a DID Document reflects a specific event in that item's lifecycle, such as production, shipping, receiving, or manufacturing. By leveraging the did:cheqd method, _SupplyTrust_ stores these document versions on-chain and sequentially linked, enabling full traceability and transparency for any item identified by its DID. Additionally, DIDs serve to identify users within SupplyTrust, which are supply chain entities, such as manufacturers, distributors, retailers etc.
 
 - **Pinata**: _SupplyTrust_ uses [Pinata](https://pinata.cloud) to efficiently interact with its off-chain storage: IPFS, essential for addressing the DID Document size limitations with did:cheqd. Pinata ensures high data availability and permanence, enhancing the Supplytrust's reliability and performance. Furthermore, Pinata’s private IPFS environment, accessible through the File API, provides _SupplyTrust_ users with a secure option for storing sensitive information. This private IPFS environment is critical, as supply chain entities (e. g., manufacturers) often require confidentiality for their proprietary data, making Pinata an essential element in fostering transparency and traceability while respecting user privacy and business secrets.
@@ -59,12 +59,15 @@ For regulators, auditing and enforcing compliance across complex supply chains r
     - [Heroku](https://www.heroku.com/) for deploying production version of _SupplyTrust_
     - [grant.io's Data Wallet](https://igrant.io/datawallet.html) for testing OID4VC based issuance and verification in production
 
-### What I learned creating _SupplyTrust_
-Creating _SupplyTrust_ deepened my understanding of DIDs and VCs, especially as I explored the potential and limitations of the did:cheqd ecosystem in detail. Working extensively with did:cheqd gave me insights into how DIDs can enhance transparency and accountability in supply chains. Additionally, building websockets was a valuable experience, allowing me to handle real-time data flow efficiently. Implementing OpenID protocols to issue and verify VCs was a significant challenge, but it strengthened my grasp of how VCs can be used for secure, decentralized identity verification, highlighting both their capabilities and current limitations in practical applications.
+### How can supply chain event metadata files in the private IPFS powered by Pinata be private but still accessible by verifiers of the underyling supply chain?
+### How can private IPFS supply chain event metadata files be kept secure yet accessible to authorized verifiers?
+To enable secure but accessible private supply chain event metadata files, _SupplyTrust_ provides a few methods for verifier access:
 
-### What challenges did I face during creation of _SupplyTrust_?
-- implementing OID4VP and OID4VPI from scratch following the official documentation published by OpenID
-- testing _SupplyTrust_ in production with [grant.io's Data Wallet](https://igrant.io/datawallet.html)
+1. **Private IPFS Access Credentials**: Verifiers can receive specific access credentials, allowing them to view designated private files. These credentials are VCs that are valid only for specified supply chain event metadata files. Only the file’s author, who is verifiable through _SupplyTrust_'s Private IPFS Ownership Credentials, can issue these access credentials. To further ensure that the issuer of the Private IPFS Access Credentials is indeed the author of the relevant private files, _SupplyTrust_ can verify the controller of the DID Document version that references the specific private file containing the supply chain event metadata.
+
+2. **Ownership-Based Access**: Another way to gain access to private event metadata files is through ownership of the supply chain item itself. _SupplyTrust_ links each supply chain item to a unique DID, controlled by the item's current owner. By verifying the ownership of the item's DID, _SupplyTrust_ can grant the current owner access to the entire history of private event metadata files associated with the item. 
+
+These mechanisms ensure that sensitive data remains protected while providing authorized verifiers with seamless access to relevant supply chain information.
 
 ### What's next for _SupplyTrust_
 - **Explore alternative DID methods**: To reduce dependency on did:cheqd, we plan to explore other DID methods, particularly [did:ipfs](https://github.com/sid030sid/did-ipfs-service-provider?tab=readme-ov-file#about-didipfs). Adopting an alternative method could potentially lower costs and improve performance, addressing two key areas necessary for _SupplyTrust_’s practical adoption, which currently hinge on did:cheqd.
@@ -75,4 +78,4 @@ Creating _SupplyTrust_ deepened my understanding of DIDs and VCs, especially as 
 
 - **Create an identity registrar for official access**: To restrict _SupplyTrust_ access to verified supply chain entities only, we plan to implement an identity registrar. This will involve developing a login interface and authentication process, advancing _SupplyTrust_ beyond its current test version toward secure, entity-restricted access.
 
-- **Address potential privacy limitations**: If a file is initially uploaded to public IPFS and then later to private IPFS, _SupplyTrust_ cannot fully guarantee privacy, even if the file is unpinned from the public IPFS. Future work will focus on mechanisms to prevent files from being publicly accessible before they are stored privately, ensuring a higher level of privacy for sensitive supply chain data.
+- See tasks in file `TODO`
